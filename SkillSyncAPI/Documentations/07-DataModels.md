@@ -4,60 +4,52 @@ Dokumentasi lengkap schema database untuk semua entities dalam SkillSync API.
 
 ---
 
-## 📊 Database Schema Overview
-
-```
-Users ──────┐
-            ├──→ TalentProfiles ──┬──→ TalentSkills ──→ Skills ──→ SkillCategories
-            │                     │
-Roles ──────┘                     └──→ ProjectAssignments ──→ Projects ──┬──→ ProjectSkills ──→ Skills
-                                                                           │
-                                                                           └──→ Users (PM)
-```
-
----
-
 ## 1. Users
 
-**Table Name:** `Users`
+**Table Name:** `users`
 
 ### Schema
 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
-| UserId | GUID | PK | Primary key |
-| Username | VARCHAR(50) | UNIQUE, NOT NULL | Login username |
-| Email | VARCHAR(100) | UNIQUE, NOT NULL | User email |
-| PasswordHash | VARCHAR(255) | NOT NULL | Hashed password |
-| RoleId | GUID | FK, NOT NULL | Foreign key to Roles |
-| CreatedAt | TIMESTAMP | NOT NULL | Creation timestamp |
-| UpdatedAt | TIMESTAMP | NOT NULL | Last update timestamp |
+| id | GUID | PK | Primary key |
+| role_id | GUID | FK, NOT NULL | Foreign key to Roles |
+| username | VARCHAR(100) | NOT NULL | Login username |
+| email | VARCHAR(255) | UNIQUE, NOT NULL | User email |
+| password | VARCHAR(255) | NOT NULL | Password (hashed) |
+| Otp | UINT | NULL | One-time password |
+| Expired | DATETIME | NULL | OTP expiration time |
+| IsUsed | BIT | NOT NULL | OTP usage status |
+| created_at | DATETIME | NOT NULL, DEFAULT GETDATE() | Creation timestamp |
+| updated_at | DATETIME | NOT NULL, DEFAULT GETDATE() | Last update timestamp |
+| is_active | BIT | NOT NULL, DEFAULT 1 | User active status |
 
 ### Relationships
 
 ```
 Users 1:1 TalentProfiles (optional)
 Users N:1 Roles
-Users 1:N Projects (as ProjectManager)
+Users 1:N ProjectAssignments
 ```
 
 ### Indexes
-
-- `IX_Users_Username` (UNIQUE)
 - `IX_Users_Email` (UNIQUE)
-- `IX_Users_RoleId`
 
 ### Sample Data
 
 ```json
 {
-  "userId": "550e8400-e29b-41d4-a716-446655440000",
-  "username": "john.doe",
-  "email": "john@company.com",
-  "passwordHash": "$2a$11$...",
+  "id": "550e8400-e29b-41d4-a716-446655440000",
   "roleId": "role-talent-guid",
+  "userName": "john.doe",
+  "email": "john@company.com",
+  "password": "hashedPassword123",
+  "otp": null,
+  "expired": null,
+  "isUsed": false,
   "createdAt": "2025-11-01T10:00:00Z",
-  "updatedAt": "2025-11-28T10:00:00Z"
+  "updatedAt": "2025-11-28T10:00:00Z",
+  "isActive": true
 }
 ```
 
@@ -65,25 +57,23 @@ Users 1:N Projects (as ProjectManager)
 
 ## 2. Roles
 
-**Table Name:** `Roles`
+**Table Name:** `roles`
 
 ### Schema
 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
-| RoleId | GUID | PK | Primary key |
-| RoleName | VARCHAR(50) | UNIQUE, NOT NULL | Role name |
-| Description | VARCHAR(255) | NULL | Role description |
-| CreatedAt | TIMESTAMP | NOT NULL | Creation timestamp |
+| Id | GUID | PK | Primary key |
+| Name | ENUM | NOT NULL | Role name (UserRole enum) |
 
-### Predefined Roles
+### UserRole Enum Values
 
-| RoleId (Example) | RoleName | Description |
-|------------------|----------|-------------|
-| admin-guid | Admin | System administrator |
-| hr-guid | HR | Human Resources |
-| pm-guid | PM | Project Manager |
-| talent-guid | Talent | Company Employee |
+| Value | Description |
+|-------|-------------|
+| Admin | System administrator |
+| HR | Human Resources |
+| ProjectManager | Project Manager |
+| Talent | Company Employee/Talent |
 
 ### Relationships
 
@@ -91,18 +81,12 @@ Users 1:N Projects (as ProjectManager)
 Roles 1:N Users
 ```
 
-### Indexes
-
-- `IX_Roles_RoleName` (UNIQUE)
-
 ### Sample Data
 
 ```json
 {
-  "roleId": "admin-guid",
-  "roleName": "Admin",
-  "description": "System administrator with full access",
-  "createdAt": "2025-11-01T00:00:00Z"
+  "id": "admin-guid",
+  "name": "Admin"
 }
 ```
 
@@ -110,62 +94,47 @@ Roles 1:N Users
 
 ## 3. TalentProfiles
 
-**Table Name:** `TalentProfiles`
+**Table Name:** `talent_profiles`
 
 ### Schema
 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
-| TalentId | GUID | PK | Primary key |
-| UserId | GUID | FK, UNIQUE, NOT NULL | Foreign key to Users |
-| FullName | VARCHAR(100) | NOT NULL | Full name |
-| Email | VARCHAR(100) | UNIQUE, NOT NULL | Contact email |
-| Phone | VARCHAR(20) | NULL | Phone number |
-| Department | VARCHAR(50) | NULL | Department name |
-| Position | VARCHAR(50) | NULL | Job position |
-| AvailabilityStatus | VARCHAR(20) | NOT NULL | Availability status |
-| CreatedAt | TIMESTAMP | NOT NULL | Creation timestamp |
-| UpdatedAt | TIMESTAMP | NOT NULL | Last update timestamp |
+| user_id | GUID | PK, FK | Primary key & Foreign key to Users |
+| first_name | VARCHAR(100) | NOT NULL | First name |
+| last_name | VARCHAR(100) | NOT NULL | Last name |
+| department | VARCHAR(100) | NULL | Department name |
+| availability_status | VARCHAR(50) | NOT NULL, DEFAULT 'Available' | Availability status (TalentStatus enum) |
+| bio | TEXT | NOT NULL | Biography/description |
+| created_at | DATETIME | NOT NULL, DEFAULT GETDATE() | Creation timestamp |
+| updated_at | DATETIME | NOT NULL, DEFAULT GETDATE() | Last update timestamp |
 
-### Availability Status Values
+### TalentStatus Enum Values
 
 | Status | Description | Can be Assigned? |
 |--------|-------------|------------------|
-| AVAILABLE | Talent tersedia | ✅ Yes |
-| ON_PROJECT | Sedang di project | ❌ No |
-| ON_LEAVE | Cuti/tidak tersedia | ❌ No |
+| Available | Talent tersedia | ✅ Yes |
+| Unavailable | Tidak tersedia sementara | ❌ No |
+| OnLeave | Cuti/tidak tersedia | ❌ No |
+| Inactive | Tidak aktif | ❌ No |
 
 ### Relationships
 
 ```
 TalentProfiles 1:1 Users
 TalentProfiles 1:N TalentSkills
-TalentProfiles 1:N ProjectAssignments
 ```
-
-### Indexes
-
-- `IX_TalentProfiles_UserId` (UNIQUE)
-- `IX_TalentProfiles_Email` (UNIQUE)
-- `IX_TalentProfiles_Department`
-- `IX_TalentProfiles_AvailabilityStatus`
-
-### Constraints
-
-- `CK_TalentProfiles_AvailabilityStatus` CHECK (AvailabilityStatus IN ('AVAILABLE', 'ON_PROJECT', 'ON_LEAVE'))
 
 ### Sample Data
 
 ```json
 {
-  "talentId": "talent-guid",
   "userId": "user-guid",
-  "fullName": "John Doe",
-  "email": "john@company.com",
-  "phone": "+1234567890",
+  "firstName": "John",
+  "lastName": "Doe",
   "department": "Engineering",
-  "position": "Senior Developer",
-  "availabilityStatus": "AVAILABLE",
+  "availabilityStatus": "Available",
+  "bio": "Experienced software developer with 5+ years in .NET development",
   "createdAt": "2025-11-01T10:00:00Z",
   "updatedAt": "2025-11-28T10:00:00Z"
 }
@@ -173,89 +142,31 @@ TalentProfiles 1:N ProjectAssignments
 
 ---
 
-## 4. SkillCategories
+## 4. Skills
 
-**Table Name:** `SkillCategories`
-
-### Schema
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| CategoryId | GUID | PK | Primary key |
-| CategoryName | VARCHAR(100) | UNIQUE, NOT NULL | Category name |
-| Description | VARCHAR(255) | NULL | Category description |
-| CreatedAt | TIMESTAMP | NOT NULL | Creation timestamp |
-
-### Relationships
-
-```
-SkillCategories 1:N Skills
-```
-
-### Indexes
-
-- `IX_SkillCategories_CategoryName` (UNIQUE)
-
-### Sample Data
-
-```json
-{
-  "categoryId": "category-guid",
-  "categoryName": "Backend Development",
-  "description": "Server-side programming skills",
-  "createdAt": "2025-11-01T10:00:00Z"
-}
-```
-
-### Example Categories
-
-- Backend Development
-- Frontend Development
-- Mobile Development
-- DevOps & Infrastructure
-- Database
-- Cloud Services
-- Testing & QA
-- UI/UX Design
-
----
-
-## 5. Skills
-
-**Table Name:** `Skills`
+**Table Name:** `skills`
 
 ### Schema
 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
-| SkillId | GUID | PK | Primary key |
-| CategoryId | GUID | FK, NOT NULL | Foreign key to SkillCategories |
-| SkillName | VARCHAR(100) | UNIQUE, NOT NULL | Skill name |
-| Description | VARCHAR(255) | NULL | Skill description |
-| CreatedAt | TIMESTAMP | NOT NULL | Creation timestamp |
+| Id | GUID | PK | Primary key |
+| Name | VARCHAR | NOT NULL | Skill name |
+| Category | VARCHAR | NOT NULL | Skill category |
 
 ### Relationships
 
 ```
-Skills N:1 SkillCategories
 Skills 1:N TalentSkills
-Skills 1:N ProjectSkills
 ```
-
-### Indexes
-
-- `IX_Skills_SkillName` (UNIQUE)
-- `IX_Skills_CategoryId`
 
 ### Sample Data
 
 ```json
 {
-  "skillId": "skill-guid",
-  "categoryId": "backend-category-guid",
-  "skillName": "ASP.NET Core",
-  "description": "Modern .NET web framework",
-  "createdAt": "2025-11-01T10:00:00Z"
+  "id": "skill-guid",
+  "name": "ASP.NET Core",
+  "category": "Backend Development"
 }
 ```
 
@@ -276,33 +187,33 @@ Skills 1:N ProjectSkills
 - SQL Server, Redis
 - Entity Framework Core
 
+**DevOps & Infrastructure:**
+- Docker, Kubernetes
+- Azure, AWS, GCP
+- CI/CD, Jenkins
+
 ---
 
-## 6. TalentSkills
+## 5. TalentSkills
 
-**Table Name:** `TalentSkills`
+**Table Name:** `talent_skills`
 
-### Schema
+### Schema (Composite Primary Key)
 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
-| TalentSkillId | GUID | PK | Primary key |
-| TalentId | GUID | FK, NOT NULL | Foreign key to TalentProfiles |
-| SkillId | GUID | FK, NOT NULL | Foreign key to Skills |
-| SkillLevel | VARCHAR(20) | NOT NULL | Skill proficiency level |
-| YearsOfExperience | DECIMAL(4,2) | NULL | Years of experience |
-| LastUsedDate | DATE | NULL | Last time skill was used |
-| CreatedAt | TIMESTAMP | NOT NULL | Creation timestamp |
-| UpdatedAt | TIMESTAMP | NOT NULL | Last update timestamp |
+| UserId | GUID | PK, FK | Foreign key to TalentProfiles (part of composite PK) |
+| SkillId | GUID | PK, FK | Foreign key to Skills (part of composite PK) |
+| Level | ENUM | NOT NULL | Skill proficiency level (SkillLevel enum) |
 
-### Skill Level Values
+### SkillLevel Enum Values
 
-| Level | Description | Years Range |
-|-------|-------------|-------------|
-| Beginner | Basic understanding | 0-1 years |
-| Intermediate | Practical experience | 1-3 years |
-| Advanced | Proficient & independent | 3-5 years |
-| Expert | Master level | 5+ years |
+| Level | Description | Experience Level |
+|-------|-------------|------------------|
+| Beginner | Basic understanding | Entry level |
+| Intermediate | Practical experience | Mid level |
+| Advanced | Proficient & independent | Senior level |
+| Expert | Master level | Expert level |
 
 ### Relationships
 
@@ -311,91 +222,60 @@ TalentSkills N:1 TalentProfiles
 TalentSkills N:1 Skills
 ```
 
-### Indexes
-
-- `IX_TalentSkills_TalentId`
-- `IX_TalentSkills_SkillId`
-- `UQ_TalentSkills_TalentId_SkillId` (UNIQUE)
-
-### Constraints
-
-- `CK_TalentSkills_SkillLevel` CHECK (SkillLevel IN ('Beginner', 'Intermediate', 'Advanced', 'Expert'))
-- `UQ_TalentSkills_TalentId_SkillId` UNIQUE (TalentId, SkillId)
+### Primary Key
+- Composite Primary Key: (`UserId`, `SkillId`)
 
 ### Sample Data
 
 ```json
 {
-  "talentSkillId": "ts-guid",
-  "talentId": "talent-guid",
+  "userId": "talent-user-guid",
   "skillId": "csharp-skill-guid",
-  "skillLevel": "Advanced",
-  "yearsOfExperience": 5.5,
-  "lastUsedDate": "2025-11-28",
-  "createdAt": "2025-11-01T10:00:00Z",
-  "updatedAt": "2025-11-28T10:00:00Z"
+  "level": "Advanced"
 }
 ```
 
 ---
 
-## 7. Projects
+## 6. Projects
 
-**Table Name:** `Projects`
+**Table Name:** `projects`
 
 ### Schema
 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
-| ProjectId | GUID | PK | Primary key |
-| ProjectManagerId | GUID | FK, NOT NULL | Foreign key to Users |
-| ProjectName | VARCHAR(200) | NOT NULL | Project name |
-| Description | TEXT | NULL | Project description |
-| Status | VARCHAR(20) | NOT NULL | Project status |
-| StartDate | DATE | NULL | Project start date |
-| EndDate | DATE | NULL | Project end date |
-| CreatedAt | TIMESTAMP | NOT NULL | Creation timestamp |
-| UpdatedAt | TIMESTAMP | NOT NULL | Last update timestamp |
+| Id | GUID | PK | Primary key |
+| Name | VARCHAR | NOT NULL | Project name |
+| Status | ENUM | NOT NULL, DEFAULT 'Active' | Project status (ProjectStatus enum) |
+| Description | VARCHAR | NOT NULL | Project description |
+| CreatedAt | DATETIME | NOT NULL | Creation timestamp |
+| UpdatedAt | DATETIME | NOT NULL | Last update timestamp |
 
-### Project Status Values
+### ProjectStatus Enum Values
 
-| Status | Description | Can Delete? | Can Assign? |
-|--------|-------------|-------------|-------------|
-| Planning | Dalam perencanaan | ✅ Yes | ✅ Yes |
-| Ongoing | Sedang berjalan | ❌ No | ✅ Yes |
-| Completed | Selesai | ❌ No | ❌ No |
-| On-Hold | Ditunda | ❌ No | ✅ Yes |
+| Status | Description | 
+|--------|-------------|
+| Active | Project aktif |
+| Inactive | Project tidak aktif |
+| Completed | Project selesai |
+| OnHold | Project ditunda |
+| Cancelled | Project dibatalkan |
 
 ### Relationships
 
 ```
-Projects N:1 Users (ProjectManager)
-Projects 1:N ProjectSkills
 Projects 1:N ProjectAssignments
 ```
 
-### Indexes
-
-- `IX_Projects_ProjectManagerId`
-- `IX_Projects_Status`
-- `IX_Projects_StartDate`
-
-### Constraints
-
-- `CK_Projects_Status` CHECK (Status IN ('Planning', 'Ongoing', 'Completed', 'On-Hold'))
-- `CK_Projects_Dates` CHECK (EndDate IS NULL OR EndDate >= StartDate)
-
 ### Sample Data
 
 ```json
 {
-  "projectId": "project-guid",
-  "projectManagerId": "pm-user-guid",
-  "projectName": "E-Commerce Platform",
+  "id": "project-guid",
+  "name": "E-Commerce Platform",
+  "status": "Active",
   "description": "Build modern online shopping system",
-  "status": "Ongoing",
-  "startDate": "2025-12-01",
-  "endDate": "2026-03-31",
   "createdAt": "2025-11-01T10:00:00Z",
   "updatedAt": "2025-11-28T10:00:00Z"
 }
@@ -403,117 +283,64 @@ Projects 1:N ProjectAssignments
 
 ---
 
-## 8. ProjectSkills
+## 7. ProjectAssignments
 
-**Table Name:** `ProjectSkills`
-
-### Schema
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| ProjectSkillId | GUID | PK | Primary key |
-| ProjectId | GUID | FK, NOT NULL | Foreign key to Projects |
-| SkillId | GUID | FK, NOT NULL | Foreign key to Skills |
-| MinimumLevel | VARCHAR(20) | NOT NULL | Minimum skill level required |
-| IsMandatory | BOOLEAN | NOT NULL | Is skill mandatory? |
-| CreatedAt | TIMESTAMP | NOT NULL | Creation timestamp |
-
-### Relationships
-
-```
-ProjectSkills N:1 Projects
-ProjectSkills N:1 Skills
-```
-
-### Indexes
-
-- `IX_ProjectSkills_ProjectId`
-- `IX_ProjectSkills_SkillId`
-- `UQ_ProjectSkills_ProjectId_SkillId` (UNIQUE)
-
-### Constraints
-
-- `CK_ProjectSkills_MinimumLevel` CHECK (MinimumLevel IN ('Beginner', 'Intermediate', 'Advanced', 'Expert'))
-- `UQ_ProjectSkills_ProjectId_SkillId` UNIQUE (ProjectId, SkillId)
-
-### Sample Data
-
-```json
-{
-  "projectSkillId": "ps-guid",
-  "projectId": "project-guid",
-  "skillId": "csharp-skill-guid",
-  "minimumLevel": "Advanced",
-  "isMandatory": true,
-  "createdAt": "2025-11-01T10:00:00Z"
-}
-```
-
----
-
-## 9. ProjectAssignments
-
-**Table Name:** `ProjectAssignments`
+**Table Name:** `project_assignments`
 
 ### Schema
 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
-| AssignmentId | GUID | PK | Primary key |
+| Id | GUID | PK | Primary key |
 | ProjectId | GUID | FK, NOT NULL | Foreign key to Projects |
-| TalentId | GUID | FK, NOT NULL | Foreign key to TalentProfiles |
-| RoleOnProject | VARCHAR(100) | NOT NULL | Role in the project |
-| AssignedDate | DATE | NOT NULL | Date assigned |
-| ReleaseDate | DATE | NULL | Date released (NULL if active) |
-| CreatedAt | TIMESTAMP | NOT NULL | Creation timestamp |
-| UpdatedAt | TIMESTAMP | NOT NULL | Last update timestamp |
+| UserId | GUID | FK, NOT NULL | Foreign key to Users |
+| RoleOnProject | VARCHAR | NOT NULL | Role in the project |
+| Status | ENUM | NOT NULL | Assignment status (ProjectAssignmentStatus enum) |
+| AssignedAt | DATETIME | NOT NULL | Date and time assigned |
+| CompletedAt | DATETIME | NULL | Date and time completed (NULL if active) |
+
+### ProjectAssignmentStatus Enum Values
+
+| Status | Description |
+|--------|-------------|
+| Active | Assignment aktif |
+| Inactive | Assignment tidak aktif |
+| Completed | Assignment selesai |
+| Replaced | Assignment digantikan |
+| Dropped | Assignment dibatalkan |
 
 ### Relationships
 
 ```
 ProjectAssignments N:1 Projects
-ProjectAssignments N:1 TalentProfiles
+ProjectAssignments N:1 Users
 ```
-
-### Indexes
-
-- `IX_ProjectAssignments_ProjectId`
-- `IX_ProjectAssignments_TalentId`
-- `IX_ProjectAssignments_ReleaseDate`
-- `UQ_ProjectAssignments_Active` (UNIQUE filtered: WHERE ReleaseDate IS NULL)
-
-### Constraints
-
-- `UQ_ProjectAssignments_ProjectId_TalentId` UNIQUE (ProjectId, TalentId) WHERE ReleaseDate IS NULL
-  - Prevents duplicate active assignments
 
 ### Sample Data
 
 **Active Assignment:**
 ```json
 {
-  "assignmentId": "assignment-guid",
+  "id": "assignment-guid",
   "projectId": "project-guid",
-  "talentId": "talent-guid",
+  "userId": "user-guid",
   "roleOnProject": "Backend Developer",
-  "assignedDate": "2025-11-15",
-  "releaseDate": null,
-  "createdAt": "2025-11-15T10:00:00Z",
-  "updatedAt": "2025-11-15T10:00:00Z"
+  "status": "Active",
+  "assignedAt": "2025-11-15T10:00:00Z",
+  "completedAt": null
 }
 ```
 
-**Historical Assignment:**
+**Completed Assignment:**
 ```json
 {
-  "assignmentId": "assignment-guid-2",
+  "id": "assignment-guid-2",
   "projectId": "old-project-guid",
-  "talentId": "talent-guid",
+  "userId": "user-guid",
   "roleOnProject": "Backend Developer",
-  "assignedDate": "2025-06-01",
-  "releaseDate": "2025-10-31",
-  "createdAt": "2025-06-01T10:00:00Z",
-  "updatedAt": "2025-10-31T10:00:00Z"
+  "status": "Completed",
+  "assignedAt": "2025-06-01T10:00:00Z",
+  "completedAt": "2025-10-31T17:00:00Z"
 }
 ```
 
@@ -544,55 +371,52 @@ ProjectAssignments N:1 TalentProfiles
 │    Users    │──────1:1────→│ TalentProfiles   │
 └──────┬──────┘              └────────┬─────────┘
        │                              │
-       │ 1:N (PM)                     │ 1:N
+       │ 1:N                          │ 1:N
        ↓                              ↓
 ┌─────────────┐              ┌──────────────────┐              ┌─────────────────┐
-│  Projects   │──────1:N────→│ ProjectAssign.   │←────N:1─────│  TalentSkills   │
-└──────┬──────┘              └──────────────────┘              └────────┬────────┘
-       │                                                                 │
-       │ 1:N                                                            │ N:1
-       ↓                                                                 ↓
-┌──────────────┐                                                ┌───────────────┐
-│ ProjectSkills│←──────────────────N:1──────────────────────────│    Skills     │
-└──────────────┘                                                └───────┬───────┘
+│  Projects   │──────1:N────→│ ProjectAssign.   │              │  TalentSkills   │
+└─────────────┘              └──────────────────┘              └────────┬────────┘
                                                                         │ N:1
                                                                         ↓
-                                                                ┌───────────────────┐
-                                                                │ SkillCategories   │
-                                                                └───────────────────┘
+                                                                ┌───────────────┐
+                                                                │    Skills     │
+                                                                └───────────────┘
 ```
 
 ---
 
 ## 📝 Business Logic Constraints
 
-### 1. User & Talent Profile
-- User dengan role "Talent" harus memiliki TalentProfile
-- One user = one talent profile (jika role = Talent)
-- Email di Users dan TalentProfiles harus sync
+### 1. User & Role Management
+- Users memiliki FK ke Roles (role_id)
+- User dengan role "Talent" dapat memiliki TalentProfile (1:1 optional)
+- User aktif/nonaktif diatur dengan field `is_active`
+- OTP system untuk authentication (Otp, Expired, IsUsed fields)
 
-### 2. Availability Management
-- Default: AVAILABLE
-- Auto ON_PROJECT saat assigned
-- Auto AVAILABLE saat removed
-- HR dapat manual set AVAILABLE ↔ ON_LEAVE
-- HR **tidak bisa** manual set ON_PROJECT
+### 2. Talent Profile Management
+- TalentProfile menggunakan UserId sebagai PK (1:1 dengan Users)
+- Default availability status: "Available"
+- Availability status: Available | Unavailable | OnLeave | Inactive
+- Name dipisah menjadi FirstName dan LastName
+- Bio wajib diisi untuk talent profile
 
-### 3. Skill Mapping
-- Talent tidak bisa memiliki duplicate skill
-- Skill level harus: Beginner | Intermediate | Advanced | Expert
-- Cannot delete skill if assigned to talents
+### 3. Skill Management
+- Skills memiliki name dan category (tidak ada separate SkillCategories table)
+- TalentSkills menggunakan composite primary key (UserId, SkillId)
+- Skill level: Beginner | Intermediate | Advanced | Expert
+- Satu talent tidak bisa memiliki duplicate skill (enforced by composite PK)
 
 ### 4. Project Management
-- PM hanya bisa manage project miliknya
-- Cannot delete project with active assignments
-- Status transition rules enforced
+- Project tidak memiliki project manager field secara langsung
+- Project status: Active | Inactive | Completed | OnHold | Cancelled
+- Default status: Active
 
 ### 5. Assignment Rules
-- Talent harus AVAILABLE untuk di-assign
-- No duplicate active assignment (same project + talent)
-- ReleaseDate = NULL → active assignment
-- ReleaseDate != NULL → historical assignment
+- ProjectAssignments menghubungkan Users dengan Projects (bukan TalentProfiles)
+- Assignment status: Active | Inactive | Completed | Replaced | Dropped
+- CompletedAt = NULL → assignment masih aktif
+- CompletedAt != NULL → assignment sudah selesai
+- Tracking waktu dengan AssignedAt dan CompletedAt
 
 ---
 
@@ -600,30 +424,34 @@ ProjectAssignments N:1 TalentProfiles
 
 ### Initial Roles
 ```sql
-INSERT INTO Roles (RoleId, RoleName, Description) VALUES
-('admin-guid', 'Admin', 'System administrator'),
-('hr-guid', 'HR', 'Human Resources'),
-('pm-guid', 'PM', 'Project Manager'),
-('talent-guid', 'Talent', 'Company Employee');
+INSERT INTO roles (Id, Name) VALUES
+('admin-guid', 'Admin'),
+('hr-guid', 'HR'),
+('pm-guid', 'ProjectManager'),
+('talent-guid', 'Talent');
 ```
 
-### Sample Skill Categories
+### Sample Users
 ```sql
-INSERT INTO SkillCategories (CategoryId, CategoryName, Description) VALUES
-('backend-guid', 'Backend Development', 'Server-side programming'),
-('frontend-guid', 'Frontend Development', 'Client-side programming'),
-('database-guid', 'Database', 'Database management'),
-('devops-guid', 'DevOps', 'DevOps & Infrastructure');
+INSERT INTO users (id, role_id, username, email, password, created_at, updated_at, is_active) VALUES
+('user1-guid', 'admin-guid', 'admin.user', 'admin@skillsync.com', 'hashedpassword1', GETDATE(), GETDATE(), 1),
+('user2-guid', 'talent-guid', 'john.doe', 'john.doe@company.com', 'hashedpassword2', GETDATE(), GETDATE(), 1);
 ```
 
 ### Sample Skills
 ```sql
-INSERT INTO Skills (SkillId, CategoryId, SkillName, Description) VALUES
-('csharp-guid', 'backend-guid', 'C#', '.NET programming language'),
-('aspnet-guid', 'backend-guid', 'ASP.NET Core', 'Modern .NET web framework'),
-('postgresql-guid', 'database-guid', 'PostgreSQL', 'Relational database'),
-('react-guid', 'frontend-guid', 'React', 'JavaScript UI library'),
-('docker-guid', 'devops-guid', 'Docker', 'Containerization platform');
+INSERT INTO skills (Id, Name, Category) VALUES
+('csharp-guid', 'C#', 'Backend Development'),
+('aspnet-guid', 'ASP.NET Core', 'Backend Development'),
+('postgresql-guid', 'PostgreSQL', 'Database'),
+('react-guid', 'React', 'Frontend Development'),
+('docker-guid', 'Docker', 'DevOps');
+```
+
+### Sample TalentProfiles
+```sql
+INSERT INTO talent_profiles (user_id, first_name, last_name, department, availability_status, bio, created_at, updated_at) VALUES
+('user2-guid', 'John', 'Doe', 'Engineering', 'Available', 'Experienced .NET developer with 5+ years experience', GETDATE(), GETDATE());
 ```
 
 ---
@@ -631,21 +459,41 @@ INSERT INTO Skills (SkillId, CategoryId, SkillName, Description) VALUES
 ## 📊 Database Performance Considerations
 
 ### Indexing Strategy
-1. **Unique Indexes** untuk fields yang unique (Username, Email, etc.)
-2. **Foreign Key Indexes** untuk semua FK relationships
-3. **Composite Indexes** untuk query patterns umum
-4. **Filtered Indexes** untuk active assignments
+1. **Unique Indexes** untuk fields yang unique (Email)
+2. **Foreign Key Indexes** untuk semua FK relationships (role_id, user_id, project_id, skill_id)
+3. **Composite Primary Keys** untuk many-to-many relationships (TalentSkills)
+4. **Status Indexes** untuk filtering berdasarkan status
+
+### Key Indexes
+```sql
+-- Users table
+CREATE UNIQUE INDEX IX_Users_Email ON users(email);
+CREATE INDEX IX_Users_RoleId ON users(role_id);
+
+-- TalentProfiles table  
+CREATE INDEX IX_TalentProfiles_AvailabilityStatus ON talent_profiles(availability_status);
+CREATE INDEX IX_TalentProfiles_Department ON talent_profiles(department);
+
+-- ProjectAssignments table
+CREATE INDEX IX_ProjectAssignments_ProjectId ON project_assignments(project_id);
+CREATE INDEX IX_ProjectAssignments_UserId ON project_assignments(user_id);
+CREATE INDEX IX_ProjectAssignments_Status ON project_assignments(status);
+
+-- TalentSkills composite primary key
+ALTER TABLE talent_skills ADD CONSTRAINT PK_TalentSkills PRIMARY KEY (UserId, SkillId);
+```
 
 ### Query Optimization
 - Use `Include()` untuk eager loading related entities
 - Implement pagination untuk large result sets
 - Use `AsNoTracking()` untuk read-only queries
-- Index pada `AvailabilityStatus`, `Status`, `RoleId`
+- Filter berdasarkan status untuk performance yang lebih baik
 
 ### Data Retention
-- Keep assignment history (soft delete with ReleaseDate)
+- Keep assignment history dengan status tracking (Active → Completed/Inactive)
 - Archive completed projects (optional)
 - Audit trail via CreatedAt/UpdatedAt timestamps
+- Soft delete dengan IsActive flag pada Users table
 
 ---
 
