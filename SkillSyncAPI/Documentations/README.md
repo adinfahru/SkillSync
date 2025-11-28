@@ -25,14 +25,8 @@ Daftar lengkap endpoint untuk setiap modul dengan method HTTP dan authorization 
 ### 7. [Data Models](./07-DataModels.md)
 Schema database untuk semua entities dan relationship antar tabel.
 
-### 8. [Security & Business Rules](./08-SecurityAndBusinessRules.md)
-Best practices untuk authentication, authorization, dan aturan bisnis aplikasi.
-
-### 9. [Development Guidelines](./09-DevelopmentGuidelines.md)
+### 8. [Development Guidelines](./08-DevelopmentGuidelines.md)
 Panduan development, naming conventions, error handling, dan validation.
-
-### 10. [Future Enhancements](./10-FutureEnhancements.md)
-Rencana fitur dan technical improvements post-MVP.
 
 ---
 
