@@ -70,6 +70,33 @@ namespace SkillSyncAPI.Data
                 .WithOne(pa => pa.Project)
                 .HasForeignKey(pa => pa.ProjectId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Database seeding
+            SeedData(modelBuilder);
+        }
+
+        private void SeedData(ModelBuilder modelBuilder)
+        {
+            // Seed data using static seeder methods
+            modelBuilder.Entity<Roles>().HasData(SkillSyncDataSeeder.GetDefaultRoles());
+
+            modelBuilder.Entity<Skills>().HasData(SkillSyncDataSeeder.GetDefaultSkills());
+
+            modelBuilder.Entity<Users>().HasData(SkillSyncDataSeeder.GetDefaultUsers());
+
+            modelBuilder
+                .Entity<TalentProfiles>()
+                .HasData(SkillSyncDataSeeder.GetDefaultTalentProfiles());
+
+            modelBuilder
+                .Entity<TalentSkills>()
+                .HasData(SkillSyncDataSeeder.GetDefaultTalentSkills());
+
+            modelBuilder.Entity<Projects>().HasData(SkillSyncDataSeeder.GetDefaultProjects());
+
+            modelBuilder
+                .Entity<ProjectAssignments>()
+                .HasData(SkillSyncDataSeeder.GetDefaultProjectAssignments());
         }
     }
 }
