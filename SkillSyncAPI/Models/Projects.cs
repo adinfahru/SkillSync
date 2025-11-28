@@ -8,6 +8,9 @@ public class Projects
     public required string Description { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+
+    // 1 Project bisa punya banyak ProjectAssignments
+    public ICollection<ProjectAssignments>? ProjectAssignments { get; set; }
 }
 
 public enum ProjectStatus

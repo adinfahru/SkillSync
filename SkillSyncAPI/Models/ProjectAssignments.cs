@@ -9,6 +9,12 @@ public class ProjectAssignments
     public ProjectAssignmentStatus Status { get; set; }
     public DateTime AssignedAt { get; set; }
     public DateTime? CompletedAt { get; set; }
+
+    // Many ProjectAssignments punya 1 Project
+    public Projects? Project { get; set; }
+
+    // Many ProjectAssignments punya 1 User
+    public Users? User { get; set; }
 }
 
 public enum ProjectAssignmentStatus

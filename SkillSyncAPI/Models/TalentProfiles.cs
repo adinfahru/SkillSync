@@ -13,6 +13,9 @@ public class TalentProfiles
 
     // 1 TalentProfile punya 1 User
     public Users? User { get; set; }
+
+    // 1 TalentProfile bisa punya banyak TalentSkills
+    public ICollection<TalentSkills>? TalentSkills { get; set; }
 }
 
 public enum TalentStatus
