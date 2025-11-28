@@ -30,9 +30,6 @@ secrets.json
 # NuGet restore
 .nuget/
 
-# Entity Framework
-migrations/
-
 # Others
 *.dbmdl
 *.dbproj
