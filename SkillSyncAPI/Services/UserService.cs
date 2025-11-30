@@ -1,3 +1,4 @@
+using SkillSyncAPI.Data;
 using SkillSyncAPI.DTOs;
 using SkillSyncAPI.Models;
 using SkillSyncAPI.Repositories.Interfaces;
@@ -7,12 +8,17 @@ namespace SkillSyncAPI.Services;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
-    private readonly IRoleRepository _roleRepository;
+    private static readonly List<Guid> ValidRoleIds = new()
+    {
+        SkillSyncDataSeeder.AdminRoleId,
+        SkillSyncDataSeeder.HRRoleId,
+        SkillSyncDataSeeder.ProjectManagerRoleId,
+        SkillSyncDataSeeder.TalentRoleId,
+    };
 
-    public UserService(IUserRepository userRepository, IRoleRepository roleRepository)
+    public UserService(IUserRepository userRepository)
     {
         _userRepository = userRepository;
-        _roleRepository = roleRepository;
     }
 
     public async Task<List<UserResponseDto>> GetAllUsersAsync(string? search = null)
@@ -41,8 +47,7 @@ public class UserService : IUserService
     {
         var ct = CancellationToken.None;
 
-        var roles = await _roleRepository.GetAllAsync(ct);
-        if (!roles.Any(r => r.Id == dto.RoleId))
+        if (!ValidRoleIds.Contains(dto.RoleId))
             throw new InvalidOperationException("Role not found");
 
         var users = await _userRepository.GetAllAsync(ct);
@@ -74,8 +79,7 @@ public class UserService : IUserService
 
         if (dto.RoleId.HasValue)
         {
-            var roles = await _roleRepository.GetAllAsync(ct);
-            if (!roles.Any(r => r.Id == dto.RoleId.Value))
+            if (!ValidRoleIds.Contains(dto.RoleId.Value))
                 throw new InvalidOperationException("Role not found");
             user.RoleId = dto.RoleId.Value;
         }
