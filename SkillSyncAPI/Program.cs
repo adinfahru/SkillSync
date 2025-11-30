@@ -15,14 +15,15 @@ builder.Services.AddDbContext<SkillSyncDbContext>(options =>
 
 // Add repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<ITalentProfileRepository, TalentProfileRepository>();
 builder.Services.AddScoped<ISkillRepository, SkillRepository>();
+builder.Services.AddScoped<ITalentSkillRepository, TalentSkillRepository>();
 
 // Add services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITalentProfileService, TalentProfileService>();
 builder.Services.AddScoped<ISkillService, SkillService>();
+builder.Services.AddScoped<ITalentSkillService, TalentSkillService>();
 
 // Add services to the container.
 builder.Services.AddControllers();
