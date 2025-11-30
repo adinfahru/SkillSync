@@ -18,12 +18,14 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITalentProfileRepository, TalentProfileRepository>();
 builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 builder.Services.AddScoped<ITalentSkillRepository, TalentSkillRepository>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 
 // Add services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITalentProfileService, TalentProfileService>();
 builder.Services.AddScoped<ISkillService, SkillService>();
 builder.Services.AddScoped<ITalentSkillService, TalentSkillService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 
 // Add services to the container.
 builder.Services.AddControllers();
