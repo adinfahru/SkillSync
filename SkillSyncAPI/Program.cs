@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SkillSyncAPI.Data;
+using SkillSyncAPI.Repositories;
 using SkillSyncAPI.Repositories.Data;
 using SkillSyncAPI.Repositories.Interfaces;
 using SkillSyncAPI.Services;
@@ -19,6 +20,7 @@ builder.Services.AddScoped<ITalentProfileRepository, TalentProfileRepository>();
 builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 builder.Services.AddScoped<ITalentSkillRepository, TalentSkillRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IProjectAssignmentRepository, ProjectAssignmentRepository>();
 
 // Add services
 builder.Services.AddScoped<IUserService, UserService>();
@@ -26,6 +28,7 @@ builder.Services.AddScoped<ITalentProfileService, TalentProfileService>();
 builder.Services.AddScoped<ISkillService, SkillService>();
 builder.Services.AddScoped<ITalentSkillService, TalentSkillService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IProjectAssignmentService, ProjectAssignmentService>();
 
 // Add services to the container.
 builder.Services.AddControllers();

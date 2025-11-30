@@ -25,7 +25,7 @@ Dokumentasi lengkap semua API endpoints dalam SkillSync API.
 - `PUT /api/talents/{id}/availability` - Update availability status (HR)
 
 ### **🛠️ Skills Management (HR Only)**
-- `GET /api/skills` - Get all skills (with category filter)
+- `GET /api/skills` - Get all skills 
 - `GET /api/skills/{id}` - Get skill by ID
 - `POST /api/skills` - Create new skill
 - `PUT /api/skills/{id}` - Update skill
