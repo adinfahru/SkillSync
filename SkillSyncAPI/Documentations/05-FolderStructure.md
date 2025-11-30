@@ -14,11 +14,9 @@ SkillSyncAPI/
 │   ├── UsersController.cs               # User management (Admin)
 │   ├── RolesController.cs               # Role management (Admin)
 │   ├── TalentsController.cs             # Talent management (HR, PM, Talent)
-│   ├── SkillCategoriesController.cs     # Skill category CRUD (HR)
-│   ├── SkillsController.cs              # Skills CRUD (HR)
+│   ├── SkillsController.cs              # Skills CRUD (HR) - handles Skills & Categories
 │   ├── TalentSkillsController.cs        # Talent skill mapping (HR)
 │   ├── ProjectsController.cs            # Project management (PM)
-│   ├── ProjectSkillsController.cs       # Project skill requirements (PM)
 │   └── ProjectAssignmentsController.cs  # Talent assignment (PM)
 │
 ├── Services/                            # Business Logic Layer
@@ -26,12 +24,10 @@ SkillSyncAPI/
 │   │   ├── IAuthService.cs
 │   │   ├── IUserService.cs
 │   │   ├── IRoleService.cs
-│   │   ├── ITalentService.cs
-│   │   ├── ISkillCategoryService.cs
-│   │   ├── ISkillService.cs
+│   │   ├── ITalentService.cs           # Handles TalentProfile entity
+│   │   ├── ISkillService.cs            # Handles Skill entity (includes categories)
 │   │   ├── ITalentSkillService.cs
 │   │   ├── IProjectService.cs
-│   │   ├── IProjectSkillService.cs
 │   │   ├── IProjectAssignmentService.cs
 │   │   └── ITalentMatchingService.cs
 │   │
@@ -39,35 +35,33 @@ SkillSyncAPI/
 │   ├── UserService.cs                   # User business logic
 │   ├── RoleService.cs                   # Role business logic
 │   ├── TalentService.cs                 # Talent management logic
-│   ├── SkillCategoryService.cs          # Category management logic
-│   ├── SkillService.cs                  # Skill management logic
+│   ├── SkillService.cs                  # Skill & category management logic
 │   ├── TalentSkillService.cs            # Skill mapping logic
 │   ├── ProjectService.cs                # Project management logic
-│   ├── ProjectSkillService.cs           # Project requirements logic
 │   ├── ProjectAssignmentService.cs      # Assignment logic & validation
 │   └── TalentMatchingService.cs         # Search & matching algorithm
 │
 ├── Repositories/                        # Data Access Layer
 │   ├── Interfaces/                      # Repository contracts
+│   │   ├── IRepository.cs              # Base repository interface
+│   │   ├── IUnitOfWork.cs              # Unit of Work pattern
 │   │   ├── IUserRepository.cs
 │   │   ├── IRoleRepository.cs
 │   │   ├── ITalentProfileRepository.cs
-│   │   ├── ISkillCategoryRepository.cs
 │   │   ├── ISkillRepository.cs
 │   │   ├── ITalentSkillRepository.cs
 │   │   ├── IProjectRepository.cs
-│   │   ├── IProjectSkillRepository.cs
 │   │   └── IProjectAssignmentRepository.cs
 │   │
 │   └── Data/                            # Repository implementations
+│       ├── Repository.cs               # Base repository implementation
+│       ├── UnitOfWork.cs              # Unit of Work implementation
 │       ├── UserRepository.cs
 │       ├── RoleRepository.cs
 │       ├── TalentProfileRepository.cs
-│       ├── SkillCategoryRepository.cs
 │       ├── SkillRepository.cs
 │       ├── TalentSkillRepository.cs
 │       ├── ProjectRepository.cs
-│       ├── ProjectSkillRepository.cs
 │       └── ProjectAssignmentRepository.cs
 │
 ├── DTOs/                                # Data Transfer Objects
@@ -91,10 +85,9 @@ SkillSyncAPI/
 │   │   └── UpdateAvailabilityDto.cs
 │   │
 │   ├── Skills/
-│   │   ├── SkillCategoryDto.cs
-│   │   ├── CreateSkillCategoryDto.cs
 │   │   ├── SkillDto.cs
-│   │   └── CreateSkillDto.cs
+│   │   ├── CreateSkillDto.cs
+│   │   └── UpdateSkillDto.cs
 │   │
 │   ├── TalentSkills/
 │   │   ├── TalentSkillDto.cs
@@ -107,10 +100,6 @@ SkillSyncAPI/
 │   │   ├── UpdateProjectDto.cs
 │   │   └── ProjectDetailDto.cs
 │   │
-│   ├── ProjectSkills/
-│   │   ├── ProjectSkillDto.cs
-│   │   └── AddProjectSkillDto.cs
-│   │
 │   ├── ProjectAssignments/
 │   │   ├── ProjectAssignmentDto.cs
 │   │   ├── AssignTalentDto.cs
@@ -121,30 +110,26 @@ SkillSyncAPI/
 │       ├── SearchResultDto.cs
 │       └── TalentMatchDto.cs
 │
-├── Models/                              # Domain Entities
-│   ├── Users.cs
-│   ├── Roles.cs
-│   ├── TalentProfiles.cs
-│   ├── Skills.cs
-│   ├── SkillCategories.cs
-│   ├── TalentSkills.cs
-│   ├── Projects.cs
-│   ├── ProjectSkills.cs
-│   └── ProjectAssignments.cs
+├── Models/                              # Domain Entities (SINGULAR)
+│   ├── User.cs                         # ✅ SINGULAR - represents one user
+│   ├── Role.cs                         # ✅ SINGULAR - represents one role
+│   ├── TalentProfile.cs                # ✅ SINGULAR - represents one talent profile
+│   ├── Skill.cs                        # ✅ SINGULAR - represents one skill (includes Category field)
+│   ├── TalentSkill.cs                  # ✅ SINGULAR - represents one talent-skill mapping
+│   ├── Project.cs                      # ✅ SINGULAR - represents one project
+│   └── ProjectAssignment.cs            # ✅ SINGULAR - represents one assignment
 │
 ├── Data/                                # Database Context & Configuration
 │   ├── SkillSyncDbContext.cs
 │   ├── SkillSyncDataSeeder.cs
 │   │
-│   └── Configurations/                  # Entity configurations
-│       ├── UsersConfiguration.cs
-│       ├── RolesConfiguration.cs
+│   └── Configurations/                  # Entity configurations (PLURAL)
+│       ├── UsersConfiguration.cs       # ✅ PLURAL - configures Users table
+│       ├── RolesConfiguration.cs       # ✅ PLURAL - configures Roles table
 │       ├── TalentProfilesConfiguration.cs
 │       ├── SkillsConfiguration.cs
-│       ├── SkillCategoriesConfiguration.cs
 │       ├── TalentSkillsConfiguration.cs
 │       ├── ProjectsConfiguration.cs
-│       ├── ProjectSkillsConfiguration.cs
 │       └── ProjectAssignmentsConfiguration.cs
 │
 ├── Migrations/                          # EF Core Migrations
@@ -170,16 +155,14 @@ SkillSyncAPI/
 │   ├── 05-FolderStructure.md
 │   ├── 06-APIEndpoints.md
 │   ├── 07-DataModels.md
-│   ├── 08-SecurityAndBusinessRules.md
-│   ├── 09-DevelopmentGuidelines.md
-│   └── 10-FutureEnhancements.md
+│   ├── 08-DevelopmentGuidelines.md
+│   └── 09-RepositoryPattern.md
 │
 ├── appsettings.json                     # Configuration
 ├── appsettings.Development.json
 ├── Program.cs                           # Application entry point
 └── SkillSyncAPI.csproj                  # Project file
 ```
-
 ---
 
 ## 🏛️ Layer Responsibilities

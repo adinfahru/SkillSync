@@ -4,6 +4,65 @@ Dokumentasi lengkap semua API endpoints dalam SkillSync API.
 
 ---
 
+## 📋 **Complete Endpoints List**
+
+### **🔐 Authentication**
+- `POST /api/auth/register` - Register user baru
+- `POST /api/auth/login` - Login dan dapatkan JWT token
+- `POST /api/auth/refresh` - Refresh JWT token
+
+### **👥 Users Management (Admin Only)** 
+- `GET /api/users` - Get all users (with search)
+- `GET /api/users/{id}` - Get user by ID
+- `POST /api/users` - Create new user
+- `PUT /api/users/{id}` - Update user
+- `DELETE /api/users/{id}` - Delete user
+
+### **👤 Talent Management**
+- `GET /api/talents` - Get all talents (HR, PM)
+- `GET /api/talents/{id}` - Get talent by ID
+- `PUT /api/talents/{id}` - Update talent (HR)
+- `DELETE /api/talents/{id}` - Delete talent (HR)
+- `PUT /api/talents/{id}/availability` - Update availability status (HR)
+
+### **🛠️ Skills Management (HR Only)**
+- `GET /api/skills` - Get all skills (with category filter)
+- `GET /api/skills/{id}` - Get skill by ID
+- `POST /api/skills` - Create new skill
+- `PUT /api/skills/{id}` - Update skill
+- `DELETE /api/skills/{id}` - Delete skill
+
+### **🎯 Talent Skills Management**
+- `GET /api/talents/{id}/skills` - Get talent's skills
+- `POST /api/talents/{id}/skills` - Add skill to talent (HR)
+- `PUT /api/talents/{talentId}/skills/{skillId}` - Update skill level (HR)
+- `DELETE /api/talents/{talentId}/skills/{skillId}` - Remove skill from talent (HR)
+
+### **📁 Projects Management (PM Only)**
+- `GET /api/projects` - Get all projects
+- `GET /api/projects/{id}` - Get project by ID
+- `POST /api/projects` - Create new project
+- `PUT /api/projects/{id}` - Update project (owner only)
+- `DELETE /api/projects/{id}` - Delete project (owner only)
+
+### **👥 Project Assignments (PM Only)**
+- `GET /api/projects/{id}/assignments` - Get project assignments
+- `POST /api/projects/{id}/assignments` - Assign talent to project
+- `PUT /api/projects/{projectId}/assignments/{assignmentId}` - Update assignment
+- `DELETE /api/projects/{projectId}/assignments/{assignmentId}` - Remove talent from project
+
+### **🔍 Talent Search & Matching (PM Only)**
+- `POST /api/talents/search` - Search talents by criteria
+- `GET /api/talents/match/{projectId}` - Auto-match talents for project
+
+### **🙋 Talent Self-Service (Talent Only)**
+- `GET /api/me/profile` - Get own profile
+- `PUT /api/me/profile` - Update own profile
+- `GET /api/me/skills` - Get own skills
+- `GET /api/me/assignments` - Get own assignments (active & history)
+
+---
+
 ## 🔐 Authentication
 
 ### Register
@@ -124,6 +183,7 @@ Refresh JWT token.
       "email": "john@company.com",
       "roleId": "role-guid",
       "roleName": "Talent",
+      "isActive": true,
       "createdAt": "2025-11-01T10:00:00Z"
     }
   ],
@@ -148,6 +208,7 @@ Refresh JWT token.
   "email": "john@company.com",
   "roleId": "role-guid",
   "roleName": "Talent",
+  "isActive": true,
   "createdAt": "2025-11-01T10:00:00Z",
   "updatedAt": "2025-11-28T10:00:00Z"
 }
@@ -183,7 +244,8 @@ Refresh JWT token.
 ```json
 {
   "email": "newemail@company.com",
-  "roleId": "new-role-guid"
+  "roleId": "new-role-guid",
+  "isActive": true
 }
 ```
 
@@ -212,15 +274,36 @@ Refresh JWT token.
 [
   {
     "roleId": "role-guid",
-    "roleName": "Admin",
-    "description": "System administrator"
+    "name": "Admin"
   },
   {
     "roleId": "role-guid-2",
-    "roleName": "HR",
-    "description": "Human Resources"
+    "name": "HR"
+  },
+  {
+    "roleId": "role-guid-3",
+    "name": "ProjectManager"
+  },
+  {
+    "roleId": "role-guid-4",
+    "name": "Talent"
   }
 ]
+```
+
+---
+
+### Get Role by ID
+**GET** `/api/roles/{id}`
+
+**Authorization:** Admin
+
+**Success Response:** `200 OK`
+```json
+{
+  "roleId": "role-guid",
+  "name": "Admin"
+}
 ```
 
 ---
@@ -233,12 +316,38 @@ Refresh JWT token.
 **Request Body:**
 ```json
 {
-  "roleName": "Custom Role",
-  "description": "Custom role description"
+  "name": "CustomRole"
 }
 ```
 
 **Success Response:** `201 Created`
+
+---
+
+### Update Role
+**PUT** `/api/roles/{id}`
+
+**Authorization:** Admin
+
+**Request Body:**
+```json
+{
+  "name": "UpdatedRoleName"
+}
+```
+
+**Success Response:** `200 OK`
+
+---
+
+### Delete Role
+**DELETE** `/api/roles/{id}`
+
+**Authorization:** Admin
+
+**Note:** Cannot delete if role has users assigned
+
+**Success Response:** `204 No Content`
 
 ---
 
@@ -251,7 +360,7 @@ Refresh JWT token.
 
 **Query Parameters:**
 - `department` (optional): Filter by department
-- `availabilityStatus` (optional): Filter by status
+- `availabilityStatus` (optional): Filter by status (Available, Unavailable, OnLeave, Inactive)
 - `page`, `pageSize` (optional): Pagination
 
 **Success Response:** `200 OK`
@@ -259,13 +368,13 @@ Refresh JWT token.
 {
   "data": [
     {
-      "talentId": "talent-guid",
+      "userId": "talent-guid",
+      "firstName": "John",
+      "lastName": "Doe",
       "fullName": "John Doe",
-      "email": "john@company.com",
-      "phone": "+1234567890",
       "department": "Engineering",
-      "position": "Senior Developer",
-      "availabilityStatus": "AVAILABLE",
+      "availabilityStatus": "Available",
+      "bio": "Experienced backend developer",
       "createdAt": "2025-11-01T10:00:00Z"
     }
   ],
@@ -285,17 +394,37 @@ Refresh JWT token.
 **Success Response:** `200 OK`
 ```json
 {
-  "talentId": "talent-guid",
+  "userId": "talent-guid",
+  "firstName": "John",
+  "lastName": "Doe",
   "fullName": "John Doe",
-  "email": "john@company.com",
-  "phone": "+1234567890",
   "department": "Engineering",
-  "position": "Senior Developer",
-  "availabilityStatus": "AVAILABLE",
+  "availabilityStatus": "Available",
+  "bio": "Experienced backend developer with 5+ years in .NET",
   "createdAt": "2025-11-01T10:00:00Z",
   "updatedAt": "2025-11-28T10:00:00Z"
 }
 ```
+
+---
+
+### Create Talent Profile
+**POST** `/api/talents`
+
+**Authorization:** HR
+
+**Request Body:**
+```json
+{
+  "userId": "user-guid",
+  "firstName": "John",
+  "lastName": "Doe",
+  "department": "Engineering",
+  "bio": "Experienced backend developer"
+}
+```
+
+**Success Response:** `201 Created`
 
 ---
 
@@ -307,15 +436,25 @@ Refresh JWT token.
 **Request Body:**
 ```json
 {
-  "fullName": "John Doe Updated",
-  "email": "john.new@company.com",
-  "phone": "+1234567890",
+  "firstName": "John",
+  "lastName": "Doe Updated",
   "department": "Engineering",
-  "position": "Lead Developer"
+  "bio": "Updated bio description"
 }
 ```
 
 **Success Response:** `200 OK`
+
+---
+
+### Delete Talent Profile
+**DELETE** `/api/talents/{id}`
+
+**Authorization:** HR
+
+**Note:** Cannot delete if talent has active assignments
+
+**Success Response:** `204 No Content`
 
 ---
 
@@ -327,107 +466,57 @@ Refresh JWT token.
 **Request Body:**
 ```json
 {
-  "availabilityStatus": "ON_LEAVE"
+  "availabilityStatus": "OnLeave"
 }
 ```
 
-**Allowed Values:** `AVAILABLE`, `ON_LEAVE`
-**Note:** Cannot manually set to `ON_PROJECT`
+**Allowed Values:** `Available`, `Unavailable`, `OnLeave`, `Inactive`
 
 **Success Response:** `200 OK`
 
 ---
 
-## 📚 Skill Categories (HR Only)
-
-### Get All Categories
-**GET** `/api/skill-categories`
-
-**Authorization:** HR, PM (read-only)
-
-**Success Response:** `200 OK`
-```json
-[
-  {
-    "categoryId": "category-guid",
-    "categoryName": "Backend Development",
-    "description": "Server-side programming",
-    "createdAt": "2025-11-01T10:00:00Z"
-  }
-]
-```
-
----
-
-### Get Category by ID
-**GET** `/api/skill-categories/{id}`
-
-**Authorization:** HR, PM
-
-**Success Response:** `200 OK`
-
----
-
-### Create Category
-**POST** `/api/skill-categories`
-
-**Authorization:** HR
-
-**Request Body:**
-```json
-{
-  "categoryName": "Backend Development",
-  "description": "Server-side programming skills"
-}
-```
-
-**Success Response:** `201 Created`
-
----
-
-### Update Category
-**PUT** `/api/skill-categories/{id}`
-
-**Authorization:** HR
-
-**Success Response:** `200 OK`
-
----
-
-### Delete Category
-**DELETE** `/api/skill-categories/{id}`
-
-**Authorization:** HR
-
-**Note:** Cannot delete if category has skills
-
-**Success Response:** `204 No Content`
-
----
-
-## 🛠️ Skills (HR Only)
+## 🛠️ Skills Management (HR Only)
 
 ### Get All Skills
 **GET** `/api/skills`
 
-**Authorization:** HR, PM (read-only)
+**Authorization:** HR, PM (read-only), Talent (read-only)
 
 **Query Parameters:**
-- `categoryId` (optional): Filter by category
+- `category` (optional): Filter by category
 - `search` (optional): Search by skill name
 
 **Success Response:** `200 OK`
 ```json
 [
   {
-    "skillId": "skill-guid",
-    "skillName": "C#",
-    "categoryId": "category-guid",
-    "categoryName": "Backend Development",
-    "description": ".NET programming language",
-    "createdAt": "2025-11-01T10:00:00Z"
+    "id": "skill-guid",
+    "name": "C#",
+    "category": "Backend Development"
+  },
+  {
+    "id": "skill-guid-2",
+    "name": "React",
+    "category": "Frontend Development"
   }
 ]
+```
+
+---
+
+### Get Skill by ID
+**GET** `/api/skills/{id}`
+
+**Authorization:** HR, PM, Talent
+
+**Success Response:** `200 OK`
+```json
+{
+  "id": "skill-guid",
+  "name": "ASP.NET Core",
+  "category": "Backend Development"
+}
 ```
 
 ---
@@ -440,9 +529,8 @@ Refresh JWT token.
 **Request Body:**
 ```json
 {
-  "skillName": "ASP.NET Core",
-  "categoryId": "category-guid",
-  "description": "Modern .NET web framework"
+  "name": "Docker",
+  "category": "DevOps"
 }
 ```
 
@@ -454,6 +542,14 @@ Refresh JWT token.
 **PUT** `/api/skills/{id}`
 
 **Authorization:** HR
+
+**Request Body:**
+```json
+{
+  "name": "Docker Updated",
+  "category": "DevOps & Infrastructure"
+}
+```
 
 **Success Response:** `200 OK`
 
@@ -470,7 +566,7 @@ Refresh JWT token.
 
 ---
 
-## 🎯 Talent Skills (HR Only)
+## 🎯 Talent Skills Management
 
 ### Get Talent Skills
 **GET** `/api/talents/{id}/skills`
@@ -481,15 +577,18 @@ Refresh JWT token.
 ```json
 [
   {
-    "talentSkillId": "ts-guid",
-    "talentId": "talent-guid",
+    "userId": "talent-guid",
     "skillId": "skill-guid",
     "skillName": "C#",
-    "categoryName": "Backend Development",
-    "skillLevel": "Advanced",
-    "yearsOfExperience": 5,
-    "lastUsedDate": "2025-11-28",
-    "createdAt": "2025-11-01T10:00:00Z"
+    "category": "Backend Development",
+    "level": "Advanced"
+  },
+  {
+    "userId": "talent-guid",
+    "skillId": "skill-guid-2",
+    "skillName": "React",
+    "category": "Frontend Development",
+    "level": "Intermediate"
   }
 ]
 ```
@@ -505,9 +604,7 @@ Refresh JWT token.
 ```json
 {
   "skillId": "skill-guid",
-  "skillLevel": "Intermediate",
-  "yearsOfExperience": 3,
-  "lastUsedDate": "2025-11-28"
+  "level": "Intermediate"
 }
 ```
 
@@ -525,9 +622,7 @@ Refresh JWT token.
 **Request Body:**
 ```json
 {
-  "skillLevel": "Advanced",
-  "yearsOfExperience": 5,
-  "lastUsedDate": "2025-11-28"
+  "level": "Advanced"
 }
 ```
 
@@ -544,7 +639,7 @@ Refresh JWT token.
 
 ---
 
-## 📁 Projects (PM Only)
+## 📁 Projects Management (PM Only)
 
 ### Get All Projects
 **GET** `/api/projects`
@@ -552,21 +647,16 @@ Refresh JWT token.
 **Authorization:** PM
 
 **Query Parameters:**
-- `status` (optional): Filter by status
-- `projectManagerId` (optional): Filter by PM
+- `status` (optional): Filter by status (Planning, Active, Completed, OnHold)
 
 **Success Response:** `200 OK`
 ```json
 [
   {
-    "projectId": "project-guid",
-    "projectName": "E-Commerce Platform",
+    "id": "project-guid",
+    "name": "E-Commerce Platform",
     "description": "Build modern shopping system",
-    "status": "Ongoing",
-    "projectManagerId": "pm-guid",
-    "projectManagerName": "Jane Smith",
-    "startDate": "2025-12-01",
-    "endDate": "2026-03-31",
+    "status": "Active",
     "createdAt": "2025-11-01T10:00:00Z"
   }
 ]
@@ -580,6 +670,16 @@ Refresh JWT token.
 **Authorization:** PM, Talent (if assigned)
 
 **Success Response:** `200 OK`
+```json
+{
+  "id": "project-guid",
+  "name": "E-Commerce Platform",
+  "description": "Build modern online shopping system with microservices architecture",
+  "status": "Active",
+  "createdAt": "2025-11-01T10:00:00Z",
+  "updatedAt": "2025-11-28T10:00:00Z"
+}
+```
 
 ---
 
@@ -591,15 +691,13 @@ Refresh JWT token.
 **Request Body:**
 ```json
 {
-  "projectName": "E-Commerce Platform",
-  "description": "Build modern online shopping system",
-  "status": "Planning",
-  "startDate": "2025-12-01",
-  "endDate": "2026-03-31"
+  "name": "Mobile Banking App",
+  "description": "Secure mobile banking application",
+  "status": "Planning"
 }
 ```
 
-**Status Options:** `Planning`, `Ongoing`, `Completed`, `On-Hold`
+**Status Options:** `Planning`, `Active`, `Completed`, `OnHold`
 
 **Success Response:** `201 Created`
 
@@ -608,102 +706,27 @@ Refresh JWT token.
 ### Update Project
 **PUT** `/api/projects/{id}`
 
-**Authorization:** PM (owner only)
+**Authorization:** PM
 
 **Request Body:**
 ```json
 {
-  "projectName": "E-Commerce Platform v2",
-  "description": "Updated description",
-  "status": "Ongoing",
-  "startDate": "2025-12-01",
-  "endDate": "2026-06-30"
+  "name": "Mobile Banking App v2",
+  "description": "Updated description with new features",
+  "status": "Active"
 }
 ```
 
 **Success Response:** `200 OK`
-
-**Error Response:** `403 Forbidden` if not owner
 
 ---
 
 ### Delete Project
 **DELETE** `/api/projects/{id}`
 
-**Authorization:** PM (owner only)
-
-**Note:** Cannot delete if has active assignments
-
-**Success Response:** `204 No Content`
-
----
-
-## 🎯 Project Skills (PM Only)
-
-### Get Project Skills
-**GET** `/api/projects/{id}/skills`
-
 **Authorization:** PM
 
-**Success Response:** `200 OK`
-```json
-[
-  {
-    "projectSkillId": "ps-guid",
-    "projectId": "project-guid",
-    "skillId": "skill-guid",
-    "skillName": "C#",
-    "categoryName": "Backend Development",
-    "minimumLevel": "Advanced",
-    "isMandatory": true,
-    "createdAt": "2025-11-01T10:00:00Z"
-  }
-]
-```
-
----
-
-### Add Skill Requirement
-**POST** `/api/projects/{id}/skills`
-
-**Authorization:** PM (owner only)
-
-**Request Body:**
-```json
-{
-  "skillId": "skill-guid",
-  "minimumLevel": "Intermediate",
-  "isMandatory": true
-}
-```
-
-**Minimum Levels:** `Beginner`, `Intermediate`, `Advanced`, `Expert`
-
-**Success Response:** `201 Created`
-
----
-
-### Update Skill Requirement
-**PUT** `/api/projects/{projectId}/skills/{skillId}`
-
-**Authorization:** PM (owner only)
-
-**Request Body:**
-```json
-{
-  "minimumLevel": "Advanced",
-  "isMandatory": false
-}
-```
-
-**Success Response:** `200 OK`
-
----
-
-### Remove Skill Requirement
-**DELETE** `/api/projects/{projectId}/skills/{skillId}`
-
-**Authorization:** PM (owner only)
+**Note:** Cannot delete if has active assignments
 
 **Success Response:** `204 No Content`
 
@@ -714,77 +737,80 @@ Refresh JWT token.
 ### Get Project Assignments
 **GET** `/api/projects/{id}/assignments`
 
-**Authorization:** PM (owner), Talent (if assigned)
+**Authorization:** PM, Talent (if assigned)
 
 **Success Response:** `200 OK`
 ```json
 [
   {
-    "assignmentId": "assignment-guid",
+    "id": "assignment-guid",
     "projectId": "project-guid",
-    "talentId": "talent-guid",
+    "userId": "talent-guid",
     "talentName": "John Doe",
-    "roleOnProject": "Backend Developer",
-    "assignedDate": "2025-11-15",
-    "releaseDate": null,
-    "createdAt": "2025-11-15T10:00:00Z"
+    "status": "Active",
+    "assignedAt": "2025-11-15T10:00:00Z",
+    "completedAt": null
   }
 ]
 ```
 
 ---
 
-### Assign Talent
+### Assign Talent to Project
 **POST** `/api/projects/{id}/assignments`
 
-**Authorization:** PM (owner only)
+**Authorization:** PM
 
 **Request Body:**
 ```json
 {
-  "talentId": "talent-guid",
-  "roleOnProject": "Backend Developer"
+  "userId": "talent-guid"
 }
 ```
 
 **Validations:**
-- Talent must be AVAILABLE
-- No duplicate assignment
-- Project owned by current PM
+- Talent must be Available
+- No duplicate assignment to same project
+- Talent must have TalentProfile
 
 **Success Response:** `201 Created`
 
 **Auto Actions:**
-- Talent availability → ON_PROJECT
+- Assignment status → Active
 
 ---
 
-### Update Assignment
+### Update Assignment Status
 **PUT** `/api/projects/{projectId}/assignments/{assignmentId}`
 
-**Authorization:** PM (owner only)
+**Authorization:** PM
 
 **Request Body:**
 ```json
 {
-  "roleOnProject": "Senior Backend Developer"
+  "status": "Completed"
 }
 ```
 
+**Status Options:** `Active`, `Completed`, `OnHold`
+
 **Success Response:** `200 OK`
+
+**Auto Actions:**
+- If status = Completed: set CompletedAt timestamp
 
 ---
 
 ### Remove Talent from Project
 **DELETE** `/api/projects/{projectId}/assignments/{assignmentId}`
 
-**Authorization:** PM (owner only)
+**Authorization:** PM
 
 **Success Response:** `204 No Content`
 
 **Auto Actions:**
-- Talent availability → AVAILABLE
-- Set ReleaseDate
+- Set CompletedAt timestamp
+- Assignment status → Completed
 
 ---
 
@@ -803,7 +829,7 @@ Refresh JWT token.
     "skill-id-1": "Intermediate",
     "skill-id-2": "Advanced"
   },
-  "availabilityStatus": "AVAILABLE",
+  "availabilityStatus": "Available",
   "department": "Engineering"
 }
 ```
@@ -813,18 +839,16 @@ Refresh JWT token.
 {
   "results": [
     {
-      "talentId": "talent-guid",
+      "userId": "talent-guid",
       "fullName": "John Doe",
       "department": "Engineering",
-      "position": "Senior Developer",
-      "availabilityStatus": "AVAILABLE",
+      "availabilityStatus": "Available",
       "matchScore": 90,
       "matchedSkills": [
         {
           "skillName": "C#",
           "talentLevel": "Advanced",
-          "requiredLevel": "Intermediate",
-          "yearsOfExperience": 5
+          "requiredLevel": "Intermediate"
         }
       ],
       "missingSkills": ["Docker"]
@@ -841,28 +865,19 @@ Refresh JWT token.
 
 **Authorization:** PM
 
-**Description:** Auto-match talents based on project skill requirements
+**Description:** Auto-match talents based on project requirements (future feature)
 
 **Success Response:** `200 OK`
 ```json
 {
   "projectId": "project-guid",
   "projectName": "E-Commerce Platform",
-  "requiredSkills": [
-    {
-      "skillName": "C#",
-      "minimumLevel": "Advanced",
-      "isMandatory": true
-    }
-  ],
   "matchedTalents": [
     {
-      "talentId": "talent-guid",
+      "userId": "talent-guid",
       "fullName": "John Doe",
       "matchScore": 95,
-      "matchedSkillsCount": 3,
-      "totalRequiredSkills": 3,
-      "matchPercentage": "100%"
+      "matchPercentage": "95%"
     }
   ]
 }
@@ -880,15 +895,35 @@ Refresh JWT token.
 **Success Response:** `200 OK`
 ```json
 {
-  "talentId": "talent-guid",
+  "userId": "talent-guid",
+  "firstName": "John",
+  "lastName": "Doe",
   "fullName": "John Doe",
-  "email": "john@company.com",
-  "phone": "+1234567890",
   "department": "Engineering",
-  "position": "Senior Developer",
-  "availabilityStatus": "ON_PROJECT"
+  "availabilityStatus": "Available",
+  "bio": "Experienced backend developer"
 }
 ```
+
+---
+
+### Update Own Profile
+**PUT** `/api/me/profile`
+
+**Authorization:** Talent
+
+**Request Body:**
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe Updated",
+  "bio": "Updated bio with more details about experience"
+}
+```
+
+**Note:** Cannot update department or availabilityStatus (HR only)
+
+**Success Response:** `200 OK`
 
 ---
 
@@ -902,10 +937,13 @@ Refresh JWT token.
 [
   {
     "skillName": "C#",
-    "categoryName": "Backend Development",
-    "level": "Advanced",
-    "yearsOfExperience": 5,
-    "lastUsedDate": "2025-11-28"
+    "category": "Backend Development",
+    "level": "Advanced"
+  },
+  {
+    "skillName": "React",
+    "category": "Frontend Development",
+    "level": "Intermediate"
   }
 ]
 ```
@@ -923,20 +961,16 @@ Refresh JWT token.
   "activeAssignments": [
     {
       "projectName": "E-Commerce Platform",
-      "roleOnProject": "Backend Developer",
-      "projectManager": "Jane Smith",
-      "assignedDate": "2025-11-15",
-      "projectStatus": "Ongoing",
-      "startDate": "2025-12-01",
-      "endDate": "2026-03-31"
+      "projectDescription": "Build modern shopping system",
+      "status": "Active",
+      "assignedAt": "2025-11-15T10:00:00Z"
     }
   ],
   "assignmentHistory": [
     {
       "projectName": "Mobile Banking App",
-      "roleOnProject": "Backend Developer",
-      "assignedDate": "2025-06-01",
-      "releaseDate": "2025-10-31",
+      "assignedAt": "2025-06-01T10:00:00Z",
+      "completedAt": "2025-10-31T10:00:00Z",
       "duration": "5 months"
     }
   ]
@@ -952,11 +986,12 @@ Refresh JWT token.
 | 200 | OK | Successful GET, PUT |
 | 201 | Created | Successful POST |
 | 204 | No Content | Successful DELETE |
-| 400 | Bad Request | Validation errors |
+| 400 | Bad Request | Validation errors, invalid data |
 | 401 | Unauthorized | Missing/invalid token |
 | 403 | Forbidden | Insufficient permissions |
 | 404 | Not Found | Resource not found |
-| 409 | Conflict | Duplicate resource |
+| 409 | Conflict | Duplicate resource, business rule violation |
+| 422 | Unprocessable Entity | Validation failed |
 | 500 | Server Error | Internal server error |
 
 ---
@@ -965,18 +1000,16 @@ Refresh JWT token.
 
 | Endpoint Group | Admin | HR | PM | Talent |
 |----------------|-------|----|----|--------|
-| Auth | ✅ | ✅ | ✅ | ✅ |
-| Users | ✅ | ❌ | ❌ | ❌ |
-| Roles | ✅ | ❌ | ❌ | ❌ |
-| Talents | 👁️ | ✅ | 👁️ | 👁️ Own |
-| Skill Categories | 👁️ | ✅ | 👁️ | ❌ |
-| Skills | 👁️ | ✅ | 👁️ | 👁️ Own |
-| Talent Skills | 👁️ | ✅ | 👁️ | 👁️ Own |
-| Projects | 👁️ | 👁️ | ✅ | 👁️ Assigned |
-| Project Skills | ❌ | ❌ | ✅ | ❌ |
-| Assignments | 👁️ | 👁️ | ✅ | 👁️ Own |
-| Search | ❌ | ❌ | ✅ | ❌ |
-| Self-Service | ❌ | ❌ | ❌ | ✅ |
+| **Auth** | ✅ | ✅ | ✅ | ✅ |
+| **Users** | ✅ | ❌ | ❌ | ❌ |
+| **Roles** | ✅ | ❌ | ❌ | ❌ |
+| **Talents** | 👁️ | ✅ | 👁️ | 👁️ Own |
+| **Skills** | 👁️ | ✅ | 👁️ | 👁️ |
+| **Talent Skills** | 👁️ | ✅ | 👁️ | 👁️ Own |
+| **Projects** | 👁️ | 👁️ | ✅ | 👁️ Assigned |
+| **Assignments** | 👁️ | 👁️ | ✅ | 👁️ Own |
+| **Search** | ❌ | ❌ | ✅ | ❌ |
+| **Self-Service** | ❌ | ❌ | ❌ | ✅ |
 
 **Legend:**
 - ✅ Full Access (CRUD)
