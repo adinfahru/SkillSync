@@ -1,6 +1,6 @@
 namespace SkillSyncAPI.Models;
 
-public class TalentProfiles
+public class TalentProfile
 {
     public Guid UserId { get; set; }
     public required string FirstName { get; set; }
@@ -12,10 +12,10 @@ public class TalentProfiles
     public DateTime UpdatedAt { get; set; }
 
     // 1 TalentProfile punya 1 User
-    public Users? User { get; set; }
+    public User? User { get; set; }
 
     // 1 TalentProfile bisa punya banyak TalentSkills
-    public ICollection<TalentSkills>? TalentSkills { get; set; }
+    public ICollection<TalentSkill>? TalentSkill { get; set; }
 }
 
 public enum TalentStatus

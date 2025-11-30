@@ -1,6 +1,6 @@
 namespace SkillSyncAPI.Models;
 
-public class ProjectAssignments
+public class ProjectAssignment
 {
     public Guid Id { get; set; }
     public Guid ProjectId { get; set; }
@@ -11,10 +11,10 @@ public class ProjectAssignments
     public DateTime? CompletedAt { get; set; }
 
     // Many ProjectAssignments punya 1 Project
-    public Projects? Project { get; set; }
+    public Project? Project { get; set; }
 
     // Many ProjectAssignments punya 1 User
-    public Users? User { get; set; }
+    public User? User { get; set; }
 }
 
 public enum ProjectAssignmentStatus

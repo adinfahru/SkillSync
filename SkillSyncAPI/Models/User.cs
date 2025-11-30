@@ -1,6 +1,6 @@
 namespace SkillSyncAPI.Models;
 
-public class Users
+public class User
 {
     public Guid Id { get; set; }
     public Guid RoleId { get; set; }
@@ -15,11 +15,11 @@ public class Users
     public bool IsActive { get; set; }
 
     // 1 User punya 1 TalentProfile
-    public TalentProfiles? TalentProfile { get; set; }
+    public TalentProfile? TalentProfile { get; set; }
 
     // Many Users punya 1 Role
-    public Roles? Role { get; set; }
+    public Role? Role { get; set; }
 
     // 1 User bisa punya banyak ProjectAssignments
-    public ICollection<ProjectAssignments>? ProjectAssignments { get; set; }
+    public ICollection<ProjectAssignment>? ProjectAssignment { get; set; }
 }
