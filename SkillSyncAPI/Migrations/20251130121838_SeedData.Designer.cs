@@ -12,7 +12,7 @@ using SkillSyncAPI.Data;
 namespace SkillSyncAPI.Migrations
 {
     [DbContext(typeof(SkillSyncDbContext))]
-    [Migration("20251128072104_SeedData")]
+    [Migration("20251130121838_SeedData")]
     partial class SeedData
     {
         /// <inheritdoc />
@@ -25,7 +25,79 @@ namespace SkillSyncAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SkillSyncAPI.Models.ProjectAssignments", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.Project", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Active")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("projects", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("40000000-0000-0000-0000-000000000001"),
+                            CreatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Building a modern e-commerce platform with .NET Core backend and React frontend. Features include user authentication, product catalog, shopping cart, and payment integration.",
+                            Name = "E-Commerce Platform",
+                            Status = "Active",
+                            UpdatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("40000000-0000-0000-0000-000000000002"),
+                            CreatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "CRM system to manage customer relationships, track sales, and generate reports. Built with ASP.NET Core Web API and Angular frontend.",
+                            Name = "Customer Management System",
+                            Status = "OnHold",
+                            UpdatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = new Guid("40000000-0000-0000-0000-000000000003"),
+                            CreatedAt = new DateTime(2025, 10, 29, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Secure mobile banking application with features like account management, fund transfers, bill payments, and transaction history.",
+                            Name = "Mobile Banking App",
+                            Status = "Completed",
+                            UpdatedAt = new DateTime(2025, 11, 23, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
+                });
+
+            modelBuilder.Entity("SkillSyncAPI.Models.ProjectAssignment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -75,127 +147,55 @@ namespace SkillSyncAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("990e8400-e29b-41d4-a716-446655440001"),
+                            Id = new Guid("50000000-0000-0000-0000-000000000001"),
                             AssignedAt = new DateTime(2025, 11, 13, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ProjectId = new Guid("880e8400-e29b-41d4-a716-446655440001"),
+                            ProjectId = new Guid("40000000-0000-0000-0000-000000000001"),
                             RoleOnProject = "Senior Backend Developer",
                             Status = "Active",
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440004")
+                            UserId = new Guid("30000000-0000-0000-0000-000000000004")
                         },
                         new
                         {
-                            Id = new Guid("990e8400-e29b-41d4-a716-446655440002"),
+                            Id = new Guid("50000000-0000-0000-0000-000000000002"),
                             AssignedAt = new DateTime(2025, 11, 16, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ProjectId = new Guid("880e8400-e29b-41d4-a716-446655440001"),
+                            ProjectId = new Guid("40000000-0000-0000-0000-000000000001"),
                             RoleOnProject = "Full Stack Developer",
                             Status = "Active",
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440005")
+                            UserId = new Guid("30000000-0000-0000-0000-000000000005")
                         },
                         new
                         {
-                            Id = new Guid("990e8400-e29b-41d4-a716-446655440003"),
+                            Id = new Guid("50000000-0000-0000-0000-000000000003"),
                             AssignedAt = new DateTime(2025, 10, 14, 0, 0, 0, 0, DateTimeKind.Utc),
                             CompletedAt = new DateTime(2025, 11, 8, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ProjectId = new Guid("880e8400-e29b-41d4-a716-446655440002"),
+                            ProjectId = new Guid("40000000-0000-0000-0000-000000000002"),
                             RoleOnProject = "Frontend Developer",
                             Status = "Inactive",
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440005")
+                            UserId = new Guid("30000000-0000-0000-0000-000000000005")
                         },
                         new
                         {
-                            Id = new Guid("990e8400-e29b-41d4-a716-446655440004"),
+                            Id = new Guid("50000000-0000-0000-0000-000000000004"),
                             AssignedAt = new DateTime(2025, 9, 29, 0, 0, 0, 0, DateTimeKind.Utc),
                             CompletedAt = new DateTime(2025, 11, 23, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ProjectId = new Guid("880e8400-e29b-41d4-a716-446655440003"),
+                            ProjectId = new Guid("40000000-0000-0000-0000-000000000003"),
                             RoleOnProject = "Tech Lead",
                             Status = "Completed",
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440004")
+                            UserId = new Guid("30000000-0000-0000-0000-000000000004")
                         },
                         new
                         {
-                            Id = new Guid("990e8400-e29b-41d4-a716-446655440005"),
+                            Id = new Guid("50000000-0000-0000-0000-000000000005"),
                             AssignedAt = new DateTime(2025, 10, 9, 0, 0, 0, 0, DateTimeKind.Utc),
                             CompletedAt = new DateTime(2025, 11, 23, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ProjectId = new Guid("880e8400-e29b-41d4-a716-446655440003"),
+                            ProjectId = new Guid("40000000-0000-0000-0000-000000000003"),
                             RoleOnProject = "DevOps Engineer",
                             Status = "Completed",
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440006")
+                            UserId = new Guid("30000000-0000-0000-0000-000000000006")
                         });
                 });
 
-            modelBuilder.Entity("SkillSyncAPI.Models.Projects", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("name");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasDefaultValue("Active")
-                        .HasColumnName("status");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("updated_at")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("projects", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("880e8400-e29b-41d4-a716-446655440001"),
-                            CreatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Building a modern e-commerce platform with .NET Core backend and React frontend. Features include user authentication, product catalog, shopping cart, and payment integration.",
-                            Name = "E-Commerce Platform",
-                            Status = "Active",
-                            UpdatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = new Guid("880e8400-e29b-41d4-a716-446655440002"),
-                            CreatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "CRM system to manage customer relationships, track sales, and generate reports. Built with ASP.NET Core Web API and Angular frontend.",
-                            Name = "Customer Management System",
-                            Status = "OnHold",
-                            UpdatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = new Guid("880e8400-e29b-41d4-a716-446655440003"),
-                            CreatedAt = new DateTime(2025, 10, 29, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Secure mobile banking application with features like account management, fund transfers, bill payments, and transaction history.",
-                            Name = "Mobile Banking App",
-                            Status = "Completed",
-                            UpdatedAt = new DateTime(2025, 11, 23, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
-                });
-
-            modelBuilder.Entity("SkillSyncAPI.Models.Roles", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -218,27 +218,27 @@ namespace SkillSyncAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("550e8400-e29b-41d4-a716-446655440001"),
+                            Id = new Guid("10000000-0000-0000-0000-000000000001"),
                             Name = "Admin"
                         },
                         new
                         {
-                            Id = new Guid("550e8400-e29b-41d4-a716-446655440002"),
+                            Id = new Guid("10000000-0000-0000-0000-000000000002"),
                             Name = "HR"
                         },
                         new
                         {
-                            Id = new Guid("550e8400-e29b-41d4-a716-446655440003"),
+                            Id = new Guid("10000000-0000-0000-0000-000000000003"),
                             Name = "ProjectManager"
                         },
                         new
                         {
-                            Id = new Guid("550e8400-e29b-41d4-a716-446655440004"),
+                            Id = new Guid("10000000-0000-0000-0000-000000000004"),
                             Name = "Talent"
                         });
                 });
 
-            modelBuilder.Entity("SkillSyncAPI.Models.Skills", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.Skill", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -267,91 +267,91 @@ namespace SkillSyncAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("660e8400-e29b-41d4-a716-446655440001"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000001"),
                             Category = "Backend Development",
                             Name = "C#"
                         },
                         new
                         {
-                            Id = new Guid("660e8400-e29b-41d4-a716-446655440002"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000002"),
                             Category = "Backend Development",
                             Name = "ASP.NET Core"
                         },
                         new
                         {
-                            Id = new Guid("660e8400-e29b-41d4-a716-446655440003"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000003"),
                             Category = "Backend Development",
                             Name = "Entity Framework Core"
                         },
                         new
                         {
-                            Id = new Guid("660e8400-e29b-41d4-a716-446655440004"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000004"),
                             Category = "Backend Development",
                             Name = "RESTful API"
                         },
                         new
                         {
-                            Id = new Guid("660e8400-e29b-41d4-a716-446655440005"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000005"),
                             Category = "Frontend Development",
                             Name = "JavaScript"
                         },
                         new
                         {
-                            Id = new Guid("660e8400-e29b-41d4-a716-446655440006"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000006"),
                             Category = "Frontend Development",
                             Name = "React"
                         },
                         new
                         {
-                            Id = new Guid("660e8400-e29b-41d4-a716-446655440007"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000007"),
                             Category = "Frontend Development",
                             Name = "TypeScript"
                         },
                         new
                         {
-                            Id = new Guid("660e8400-e29b-41d4-a716-446655440008"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000008"),
                             Category = "Frontend Development",
                             Name = "HTML/CSS"
                         },
                         new
                         {
-                            Id = new Guid("660e8400-e29b-41d4-a716-446655440009"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000009"),
                             Category = "Database",
                             Name = "SQL Server"
                         },
                         new
                         {
-                            Id = new Guid("660e8400-e29b-41d4-a716-446655440010"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000010"),
                             Category = "Database",
                             Name = "PostgreSQL"
                         },
                         new
                         {
-                            Id = new Guid("660e8400-e29b-41d4-a716-446655440011"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000011"),
                             Category = "Database",
                             Name = "MongoDB"
                         },
                         new
                         {
-                            Id = new Guid("660e8400-e29b-41d4-a716-446655440012"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000012"),
                             Category = "DevOps",
                             Name = "Docker"
                         },
                         new
                         {
-                            Id = new Guid("660e8400-e29b-41d4-a716-446655440013"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000013"),
                             Category = "DevOps",
                             Name = "Azure"
                         },
                         new
                         {
-                            Id = new Guid("660e8400-e29b-41d4-a716-446655440014"),
+                            Id = new Guid("20000000-0000-0000-0000-000000000014"),
                             Category = "DevOps",
                             Name = "CI/CD"
                         });
                 });
 
-            modelBuilder.Entity("SkillSyncAPI.Models.TalentProfiles", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.TalentProfile", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier")
@@ -407,7 +407,7 @@ namespace SkillSyncAPI.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440004"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000004"),
                             AvailabilityStatus = "Available",
                             Bio = "Senior .NET developer with 5+ years of experience in building scalable web applications. Expertise in ASP.NET Core, Entity Framework, and cloud technologies.",
                             CreatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -418,7 +418,7 @@ namespace SkillSyncAPI.Migrations
                         },
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440005"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000005"),
                             AvailabilityStatus = "Available",
                             Bio = "Full-stack developer specializing in React and .NET technologies. Strong background in database design and API development.",
                             CreatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -429,7 +429,7 @@ namespace SkillSyncAPI.Migrations
                         },
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440006"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000006"),
                             AvailabilityStatus = "OnLeave",
                             Bio = "DevOps engineer with expertise in containerization, CI/CD pipelines, and cloud infrastructure management.",
                             CreatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -440,7 +440,7 @@ namespace SkillSyncAPI.Migrations
                         });
                 });
 
-            modelBuilder.Entity("SkillSyncAPI.Models.TalentSkills", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.TalentSkill", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier")
@@ -465,85 +465,85 @@ namespace SkillSyncAPI.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440004"),
-                            SkillId = new Guid("660e8400-e29b-41d4-a716-446655440001"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000004"),
+                            SkillId = new Guid("20000000-0000-0000-0000-000000000001"),
                             Level = "Expert"
                         },
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440004"),
-                            SkillId = new Guid("660e8400-e29b-41d4-a716-446655440002"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000004"),
+                            SkillId = new Guid("20000000-0000-0000-0000-000000000002"),
                             Level = "Advanced"
                         },
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440004"),
-                            SkillId = new Guid("660e8400-e29b-41d4-a716-446655440003"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000004"),
+                            SkillId = new Guid("20000000-0000-0000-0000-000000000003"),
                             Level = "Advanced"
                         },
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440004"),
-                            SkillId = new Guid("660e8400-e29b-41d4-a716-446655440009"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000004"),
+                            SkillId = new Guid("20000000-0000-0000-0000-000000000009"),
                             Level = "Advanced"
                         },
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440005"),
-                            SkillId = new Guid("660e8400-e29b-41d4-a716-446655440001"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000005"),
+                            SkillId = new Guid("20000000-0000-0000-0000-000000000001"),
                             Level = "Advanced"
                         },
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440005"),
-                            SkillId = new Guid("660e8400-e29b-41d4-a716-446655440002"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000005"),
+                            SkillId = new Guid("20000000-0000-0000-0000-000000000002"),
                             Level = "Intermediate"
                         },
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440005"),
-                            SkillId = new Guid("660e8400-e29b-41d4-a716-446655440005"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000005"),
+                            SkillId = new Guid("20000000-0000-0000-0000-000000000005"),
                             Level = "Expert"
                         },
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440005"),
-                            SkillId = new Guid("660e8400-e29b-41d4-a716-446655440006"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000005"),
+                            SkillId = new Guid("20000000-0000-0000-0000-000000000006"),
                             Level = "Advanced"
                         },
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440005"),
-                            SkillId = new Guid("660e8400-e29b-41d4-a716-446655440007"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000005"),
+                            SkillId = new Guid("20000000-0000-0000-0000-000000000007"),
                             Level = "Advanced"
                         },
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440006"),
-                            SkillId = new Guid("660e8400-e29b-41d4-a716-446655440012"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000006"),
+                            SkillId = new Guid("20000000-0000-0000-0000-000000000012"),
                             Level = "Expert"
                         },
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440006"),
-                            SkillId = new Guid("660e8400-e29b-41d4-a716-446655440013"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000006"),
+                            SkillId = new Guid("20000000-0000-0000-0000-000000000013"),
                             Level = "Advanced"
                         },
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440006"),
-                            SkillId = new Guid("660e8400-e29b-41d4-a716-446655440014"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000006"),
+                            SkillId = new Guid("20000000-0000-0000-0000-000000000014"),
                             Level = "Advanced"
                         },
                         new
                         {
-                            UserId = new Guid("770e8400-e29b-41d4-a716-446655440006"),
-                            SkillId = new Guid("660e8400-e29b-41d4-a716-446655440010"),
+                            UserId = new Guid("30000000-0000-0000-0000-000000000006"),
+                            SkillId = new Guid("20000000-0000-0000-0000-000000000010"),
                             Level = "Intermediate"
                         });
                 });
 
-            modelBuilder.Entity("SkillSyncAPI.Models.Users", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -564,7 +564,7 @@ namespace SkillSyncAPI.Migrations
 
                     b.Property<DateTime?>("Expired")
                         .HasColumnType("datetime2")
-                        .HasColumnName("Expired");
+                        .HasColumnName("expired");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -574,11 +574,11 @@ namespace SkillSyncAPI.Migrations
 
                     b.Property<bool>("IsUsed")
                         .HasColumnType("bit")
-                        .HasColumnName("IsUsed");
+                        .HasColumnName("is_used");
 
                     b.Property<long?>("Otp")
                         .HasColumnType("bigint")
-                        .HasColumnName("Otp");
+                        .HasColumnName("otp");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -614,88 +614,88 @@ namespace SkillSyncAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("770e8400-e29b-41d4-a716-446655440001"),
+                            Id = new Guid("30000000-0000-0000-0000-000000000001"),
                             CreatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@skillsync.com",
                             IsActive = true,
                             IsUsed = false,
                             Password = "$2a$11$N2oKjyGJN5e5FbZ3vHkdLO1KJxCvYuZx3pRqF8tVwYsOZx9HkQ.mG",
-                            RoleId = new Guid("550e8400-e29b-41d4-a716-446655440001"),
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000001"),
                             UpdatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserName = "admin"
                         },
                         new
                         {
-                            Id = new Guid("770e8400-e29b-41d4-a716-446655440002"),
+                            Id = new Guid("30000000-0000-0000-0000-000000000002"),
                             CreatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "hr@skillsync.com",
                             IsActive = true,
                             IsUsed = false,
                             Password = "$2a$11$M1nJiyFIN4d4EaY2uGjcKN0JIwBuXtYw2oQpE7sUvXrNYx8GjP.lF",
-                            RoleId = new Guid("550e8400-e29b-41d4-a716-446655440002"),
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000002"),
                             UpdatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserName = "hr.manager"
                         },
                         new
                         {
-                            Id = new Guid("770e8400-e29b-41d4-a716-446655440003"),
+                            Id = new Guid("30000000-0000-0000-0000-000000000003"),
                             CreatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "john.pm@skillsync.com",
                             IsActive = true,
                             IsUsed = false,
                             Password = "$2a$11$L0mHhxEHM3c3DaX1tFibJM9IHvAtWsXv1nPoD6rTuWqMXw7FiO.kE",
-                            RoleId = new Guid("550e8400-e29b-41d4-a716-446655440003"),
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000003"),
                             UpdatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserName = "pm.john"
                         },
                         new
                         {
-                            Id = new Guid("770e8400-e29b-41d4-a716-446655440004"),
+                            Id = new Guid("30000000-0000-0000-0000-000000000004"),
                             CreatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "john.doe@skillsync.com",
                             IsActive = true,
                             IsUsed = false,
                             Password = "$2a$11$K9lGgwDGL2b2CaW0sFhaIM8HGuAsVrWu0mOnC5qSsVpLWv6EhN.jD",
-                            RoleId = new Guid("550e8400-e29b-41d4-a716-446655440004"),
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000004"),
                             UpdatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserName = "john.doe"
                         },
                         new
                         {
-                            Id = new Guid("770e8400-e29b-41d4-a716-446655440005"),
+                            Id = new Guid("30000000-0000-0000-0000-000000000005"),
                             CreatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "jane.smith@skillsync.com",
                             IsActive = true,
                             IsUsed = false,
                             Password = "$2a$11$J8kFfvCFK1a1BaV9rEgaHL7GFtArUqVt9lNmB4pRrUoKVu5DgM.iC",
-                            RoleId = new Guid("550e8400-e29b-41d4-a716-446655440004"),
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000004"),
                             UpdatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserName = "jane.smith"
                         },
                         new
                         {
-                            Id = new Guid("770e8400-e29b-41d4-a716-446655440006"),
+                            Id = new Guid("30000000-0000-0000-0000-000000000006"),
                             CreatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "mike.wilson@skillsync.com",
                             IsActive = true,
                             IsUsed = false,
                             Password = "$2a$11$I7jEeuBEJ0Z0AaU8qDfaGK6FEsAqTpUs8kMlA3oQqTnJTt4CfL.hB",
-                            RoleId = new Guid("550e8400-e29b-41d4-a716-446655440004"),
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000004"),
                             UpdatedAt = new DateTime(2025, 11, 28, 0, 0, 0, 0, DateTimeKind.Utc),
                             UserName = "mike.wilson"
                         });
                 });
 
-            modelBuilder.Entity("SkillSyncAPI.Models.ProjectAssignments", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.ProjectAssignment", b =>
                 {
-                    b.HasOne("SkillSyncAPI.Models.Projects", "Project")
-                        .WithMany("ProjectAssignments")
+                    b.HasOne("SkillSyncAPI.Models.Project", "Project")
+                        .WithMany("ProjectAssignment")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SkillSyncAPI.Models.Users", "User")
-                        .WithMany("ProjectAssignments")
+                    b.HasOne("SkillSyncAPI.Models.User", "User")
+                        .WithMany("ProjectAssignment")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -705,27 +705,27 @@ namespace SkillSyncAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SkillSyncAPI.Models.TalentProfiles", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.TalentProfile", b =>
                 {
-                    b.HasOne("SkillSyncAPI.Models.Users", "User")
+                    b.HasOne("SkillSyncAPI.Models.User", "User")
                         .WithOne("TalentProfile")
-                        .HasForeignKey("SkillSyncAPI.Models.TalentProfiles", "UserId")
+                        .HasForeignKey("SkillSyncAPI.Models.TalentProfile", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SkillSyncAPI.Models.TalentSkills", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.TalentSkill", b =>
                 {
-                    b.HasOne("SkillSyncAPI.Models.Skills", "Skill")
-                        .WithMany("TalentSkills")
+                    b.HasOne("SkillSyncAPI.Models.Skill", "Skill")
+                        .WithMany("TalentSkill")
                         .HasForeignKey("SkillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SkillSyncAPI.Models.TalentProfiles", "TalentProfile")
-                        .WithMany("TalentSkills")
+                    b.HasOne("SkillSyncAPI.Models.TalentProfile", "TalentProfile")
+                        .WithMany("TalentSkill")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -735,10 +735,10 @@ namespace SkillSyncAPI.Migrations
                     b.Navigation("TalentProfile");
                 });
 
-            modelBuilder.Entity("SkillSyncAPI.Models.Users", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.User", b =>
                 {
-                    b.HasOne("SkillSyncAPI.Models.Roles", "Role")
-                        .WithMany("Users")
+                    b.HasOne("SkillSyncAPI.Models.Role", "Role")
+                        .WithMany("User")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -746,29 +746,29 @@ namespace SkillSyncAPI.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("SkillSyncAPI.Models.Projects", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.Project", b =>
                 {
-                    b.Navigation("ProjectAssignments");
+                    b.Navigation("ProjectAssignment");
                 });
 
-            modelBuilder.Entity("SkillSyncAPI.Models.Roles", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.Role", b =>
                 {
-                    b.Navigation("Users");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SkillSyncAPI.Models.Skills", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.Skill", b =>
                 {
-                    b.Navigation("TalentSkills");
+                    b.Navigation("TalentSkill");
                 });
 
-            modelBuilder.Entity("SkillSyncAPI.Models.TalentProfiles", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.TalentProfile", b =>
                 {
-                    b.Navigation("TalentSkills");
+                    b.Navigation("TalentSkill");
                 });
 
-            modelBuilder.Entity("SkillSyncAPI.Models.Users", b =>
+            modelBuilder.Entity("SkillSyncAPI.Models.User", b =>
                 {
-                    b.Navigation("ProjectAssignments");
+                    b.Navigation("ProjectAssignment");
 
                     b.Navigation("TalentProfile");
                 });
