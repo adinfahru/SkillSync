@@ -22,7 +22,6 @@ Dokumentasi lengkap semua API endpoints dalam SkillSync API.
 - `GET /api/talents` - Get all talents (HR, PM)
 - `GET /api/talents/{id}` - Get talent by ID
 - `PUT /api/talents/{id}` - Update talent (HR)
-- `DELETE /api/talents/{id}` - Delete talent (HR)
 - `PUT /api/talents/{id}/availability` - Update availability status (HR)
 
 ### **🛠️ Skills Management (HR Only)**
