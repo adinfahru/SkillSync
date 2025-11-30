@@ -42,7 +42,7 @@ public static class SkillSyncDataSeeder
     public static readonly Guid AzureSkillId = new Guid("20000000-0000-0000-0000-000000000013");
     public static readonly Guid CiCdSkillId = new Guid("20000000-0000-0000-0000-000000000014");
 
-    // Users
+    // User
     public static readonly Guid AdminUserId = new Guid("30000000-0000-0000-0000-000000000001");
     public static readonly Guid HRUserId = new Guid("30000000-0000-0000-0000-000000000002");
     public static readonly Guid PMUserId = new Guid("30000000-0000-0000-0000-000000000003");
@@ -59,104 +59,104 @@ public static class SkillSyncDataSeeder
         "40000000-0000-0000-0000-000000000003"
     );
 
-    public static List<Roles> GetDefaultRoles()
+    public static List<Role> GetDefaultRoles()
     {
-        return new List<Roles>
+        return new List<Role>
         {
-            new Roles { Id = AdminRoleId, Name = UserRole.Admin },
-            new Roles { Id = HRRoleId, Name = UserRole.HR },
-            new Roles { Id = ProjectManagerRoleId, Name = UserRole.ProjectManager },
-            new Roles { Id = TalentRoleId, Name = UserRole.Talent },
+            new Role { Id = AdminRoleId, Name = UserRole.Admin },
+            new Role { Id = HRRoleId, Name = UserRole.HR },
+            new Role { Id = ProjectManagerRoleId, Name = UserRole.ProjectManager },
+            new Role { Id = TalentRoleId, Name = UserRole.Talent },
         };
     }
 
-    public static List<Skills> GetDefaultSkills()
+    public static List<Skill> GetDefaultSkills()
     {
-        return new List<Skills>
+        return new List<Skill>
         {
             // Backend Development
-            new Skills
+            new Skill
             {
                 Id = CSharpSkillId,
                 Name = "C#",
                 Category = "Backend Development",
             },
-            new Skills
+            new Skill
             {
                 Id = AspNetCoreSkillId,
                 Name = "ASP.NET Core",
                 Category = "Backend Development",
             },
-            new Skills
+            new Skill
             {
                 Id = EntityFrameworkSkillId,
                 Name = "Entity Framework Core",
                 Category = "Backend Development",
             },
-            new Skills
+            new Skill
             {
                 Id = RESTfulAPISkillId,
                 Name = "RESTful API",
                 Category = "Backend Development",
             },
             // Frontend Development
-            new Skills
+            new Skill
             {
                 Id = JavaScriptSkillId,
                 Name = "JavaScript",
                 Category = "Frontend Development",
             },
-            new Skills
+            new Skill
             {
                 Id = ReactSkillId,
                 Name = "React",
                 Category = "Frontend Development",
             },
-            new Skills
+            new Skill
             {
                 Id = TypeScriptSkillId,
                 Name = "TypeScript",
                 Category = "Frontend Development",
             },
-            new Skills
+            new Skill
             {
                 Id = HtmlCssSkillId,
                 Name = "HTML/CSS",
                 Category = "Frontend Development",
             },
             // Database
-            new Skills
+            new Skill
             {
                 Id = SqlServerSkillId,
                 Name = "SQL Server",
                 Category = "Database",
             },
-            new Skills
+            new Skill
             {
                 Id = PostgreSqlSkillId,
                 Name = "PostgreSQL",
                 Category = "Database",
             },
-            new Skills
+            new Skill
             {
                 Id = MongoDbSkillId,
                 Name = "MongoDB",
                 Category = "Database",
             },
             // DevOps
-            new Skills
+            new Skill
             {
                 Id = DockerSkillId,
                 Name = "Docker",
                 Category = "DevOps",
             },
-            new Skills
+            new Skill
             {
                 Id = AzureSkillId,
                 Name = "Azure",
                 Category = "DevOps",
             },
-            new Skills
+            new Skill
             {
                 Id = CiCdSkillId,
                 Name = "CI/CD",
@@ -165,14 +165,14 @@ public static class SkillSyncDataSeeder
         };
     }
 
-    public static List<Users> GetDefaultUsers()
+    public static List<User> GetDefaultUser()
     {
         var now = new DateTime(2025, 11, 28, 0, 0, 0, DateTimeKind.Utc);
 
-        return new List<Users>
+        return new List<User>
         {
             // Admin User
-            new Users
+            new User
             {
                 Id = AdminUserId,
                 RoleId = AdminRoleId,
@@ -184,7 +184,7 @@ public static class SkillSyncDataSeeder
                 IsActive = true,
             },
             // HR User
-            new Users
+            new User
             {
                 Id = HRUserId,
                 RoleId = HRRoleId,
@@ -196,7 +196,7 @@ public static class SkillSyncDataSeeder
                 IsActive = true,
             },
             // Project Manager
-            new Users
+            new User
             {
                 Id = PMUserId,
                 RoleId = ProjectManagerRoleId,
@@ -207,8 +207,8 @@ public static class SkillSyncDataSeeder
                 UpdatedAt = now,
                 IsActive = true,
             },
-            // Talent Users
-            new Users
+            // Talent User
+            new User
             {
                 Id = JohnDoeUserId,
                 RoleId = TalentRoleId,
@@ -219,7 +219,7 @@ public static class SkillSyncDataSeeder
                 UpdatedAt = now,
                 IsActive = true,
             },
-            new Users
+            new User
             {
                 Id = JaneSmithUserId,
                 RoleId = TalentRoleId,
@@ -230,7 +230,7 @@ public static class SkillSyncDataSeeder
                 UpdatedAt = now,
                 IsActive = true,
             },
-            new Users
+            new User
             {
                 Id = MikeWilsonUserId,
                 RoleId = TalentRoleId,
@@ -244,13 +244,13 @@ public static class SkillSyncDataSeeder
         };
     }
 
-    public static List<TalentProfiles> GetDefaultTalentProfiles()
+    public static List<TalentProfile> GetDefaultTalentProfiles()
     {
         var now = new DateTime(2025, 11, 28, 0, 0, 0, DateTimeKind.Utc);
 
-        return new List<TalentProfiles>
+        return new List<TalentProfile>
         {
-            new TalentProfiles
+            new TalentProfile
             {
                 UserId = JohnDoeUserId,
                 FirstName = "John",
@@ -262,7 +262,7 @@ public static class SkillSyncDataSeeder
                 CreatedAt = now,
                 UpdatedAt = now,
             },
-            new TalentProfiles
+            new TalentProfile
             {
                 UserId = JaneSmithUserId,
                 FirstName = "Jane",
@@ -274,7 +274,7 @@ public static class SkillSyncDataSeeder
                 CreatedAt = now,
                 UpdatedAt = now,
             },
-            new TalentProfiles
+            new TalentProfile
             {
                 UserId = MikeWilsonUserId,
                 FirstName = "Mike",
@@ -289,86 +289,86 @@ public static class SkillSyncDataSeeder
         };
     }
 
-    public static List<TalentSkills> GetDefaultTalentSkills()
+    public static List<TalentSkill> GetDefaultTalentSkills()
     {
-        return new List<TalentSkills>
+        return new List<TalentSkill>
         {
             // John Doe's skills
-            new TalentSkills
+            new TalentSkill
             {
                 UserId = JohnDoeUserId,
                 SkillId = CSharpSkillId,
                 Level = SkillLevel.Expert,
             },
-            new TalentSkills
+            new TalentSkill
             {
                 UserId = JohnDoeUserId,
                 SkillId = AspNetCoreSkillId,
                 Level = SkillLevel.Advanced,
             },
-            new TalentSkills
+            new TalentSkill
             {
                 UserId = JohnDoeUserId,
                 SkillId = EntityFrameworkSkillId,
                 Level = SkillLevel.Advanced,
             },
-            new TalentSkills
+            new TalentSkill
             {
                 UserId = JohnDoeUserId,
                 SkillId = SqlServerSkillId,
                 Level = SkillLevel.Advanced,
             },
             // Jane Smith's skills
-            new TalentSkills
+            new TalentSkill
             {
                 UserId = JaneSmithUserId,
                 SkillId = CSharpSkillId,
                 Level = SkillLevel.Advanced,
             },
-            new TalentSkills
+            new TalentSkill
             {
                 UserId = JaneSmithUserId,
                 SkillId = AspNetCoreSkillId,
                 Level = SkillLevel.Intermediate,
             },
-            new TalentSkills
+            new TalentSkill
             {
                 UserId = JaneSmithUserId,
                 SkillId = JavaScriptSkillId,
                 Level = SkillLevel.Expert,
             },
-            new TalentSkills
+            new TalentSkill
             {
                 UserId = JaneSmithUserId,
                 SkillId = ReactSkillId,
                 Level = SkillLevel.Advanced,
             },
-            new TalentSkills
+            new TalentSkill
             {
                 UserId = JaneSmithUserId,
                 SkillId = TypeScriptSkillId,
                 Level = SkillLevel.Advanced,
             },
             // Mike Wilson's skills
-            new TalentSkills
+            new TalentSkill
             {
                 UserId = MikeWilsonUserId,
                 SkillId = DockerSkillId,
                 Level = SkillLevel.Expert,
             },
-            new TalentSkills
+            new TalentSkill
             {
                 UserId = MikeWilsonUserId,
                 SkillId = AzureSkillId,
                 Level = SkillLevel.Advanced,
             },
-            new TalentSkills
+            new TalentSkill
             {
                 UserId = MikeWilsonUserId,
                 SkillId = CiCdSkillId,
                 Level = SkillLevel.Advanced,
             },
-            new TalentSkills
+            new TalentSkill
             {
                 UserId = MikeWilsonUserId,
                 SkillId = PostgreSqlSkillId,
@@ -377,13 +377,13 @@ public static class SkillSyncDataSeeder
         };
     }
 
-    public static List<Projects> GetDefaultProjects()
+    public static List<Project> GetDefaultProjects()
     {
         var now = new DateTime(2025, 11, 28, 0, 0, 0, DateTimeKind.Utc);
 
-        return new List<Projects>
+        return new List<Project>
         {
-            new Projects
+            new Project
             {
                 Id = ECommerceProjectId,
                 Name = "E-Commerce Platform",
@@ -393,7 +393,7 @@ public static class SkillSyncDataSeeder
                 CreatedAt = now,
                 UpdatedAt = now,
             },
-            new Projects
+            new Project
             {
                 Id = CrmProjectId,
                 Name = "Customer Management System",
@@ -403,7 +403,7 @@ public static class SkillSyncDataSeeder
                 CreatedAt = now,
                 UpdatedAt = now,
             },
-            new Projects
+            new Project
             {
                 Id = MobileBankingProjectId,
                 Name = "Mobile Banking App",
@@ -416,14 +416,14 @@ public static class SkillSyncDataSeeder
         };
     }
 
-    public static List<ProjectAssignments> GetDefaultProjectAssignments()
+    public static List<ProjectAssignment> GetDefaultProjectAssignments()
     {
         var now = new DateTime(2025, 11, 28, 0, 0, 0, DateTimeKind.Utc);
 
-        return new List<ProjectAssignments>
+        return new List<ProjectAssignment>
         {
             // E-Commerce Platform assignments
-            new ProjectAssignments
+            new ProjectAssignment
             {
                 Id = new Guid("50000000-0000-0000-0000-000000000001"),
                 ProjectId = ECommerceProjectId,
@@ -432,7 +432,7 @@ public static class SkillSyncDataSeeder
                 Status = ProjectAssignmentStatus.Active,
                 AssignedAt = now.AddDays(-15),
             },
-            new ProjectAssignments
+            new ProjectAssignment
             {
                 Id = new Guid("50000000-0000-0000-0000-000000000002"),
                 ProjectId = ECommerceProjectId,
@@ -442,7 +442,7 @@ public static class SkillSyncDataSeeder
                 AssignedAt = now.AddDays(-12),
             },
             // Customer Management System assignments
-            new ProjectAssignments
+            new ProjectAssignment
             {
                 Id = new Guid("50000000-0000-0000-0000-000000000003"),
                 ProjectId = CrmProjectId,
@@ -453,7 +453,7 @@ public static class SkillSyncDataSeeder
                 CompletedAt = now.AddDays(-20),
             },
             // Mobile Banking App assignments (completed)
-            new ProjectAssignments
+            new ProjectAssignment
             {
                 Id = new Guid("50000000-0000-0000-0000-000000000004"),
                 ProjectId = MobileBankingProjectId,
@@ -463,7 +463,7 @@ public static class SkillSyncDataSeeder
                 AssignedAt = now.AddDays(-60),
                 CompletedAt = now.AddDays(-5),
             },
-            new ProjectAssignments
+            new ProjectAssignment
             {
                 Id = new Guid("50000000-0000-0000-0000-000000000005"),
                 ProjectId = MobileBankingProjectId,

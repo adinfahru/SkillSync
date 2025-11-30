@@ -8,13 +8,13 @@ namespace SkillSyncAPI.Data
         public SkillSyncDbContext(DbContextOptions<SkillSyncDbContext> options)
             : base(options) { }
 
-        public DbSet<Roles> Roles { get; set; }
-        public DbSet<Users> Users { get; set; }
-        public DbSet<TalentProfiles> TalentProfiles { get; set; }
-        public DbSet<Skills> Skills { get; set; }
-        public DbSet<TalentSkills> TalentSkills { get; set; }
-        public DbSet<Projects> Projects { get; set; }
-        public DbSet<ProjectAssignments> ProjectAssignments { get; set; }
+        public DbSet<Role> Role { get; set; }
+        public DbSet<User> User { get; set; }
+        public DbSet<TalentProfile> TalentProfile { get; set; }
+        public DbSet<Skill> Skill { get; set; }
+        public DbSet<TalentSkill> TalentSkill { get; set; }
+        public DbSet<Project> Project { get; set; }
+        public DbSet<ProjectAssignment> ProjectAssignment { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,50 +23,50 @@ namespace SkillSyncAPI.Data
             // Apply all configurations from Configuration files
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(SkillSyncDbContext).Assembly);
 
-            // 1-to-Many between Roles and Users
+            // 1-to-Many between Role and User
             modelBuilder
-                .Entity<Roles>()
-                .HasMany(r => r.Users)
+                .Entity<Role>()
+                .HasMany(r => r.User)
                 .WithOne(u => u.Role)
                 .HasForeignKey(u => u.RoleId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // 1-to-1 between Users and TalentProfiles
+            // 1-to-1 between User and TalentProfile
             modelBuilder
-                .Entity<Users>()
+                .Entity<User>()
                 .HasOne(u => u.TalentProfile)
                 .WithOne(tp => tp.User)
-                .HasForeignKey<TalentProfiles>(tp => tp.UserId)
+                .HasForeignKey<TalentProfile>(tp => tp.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // 1-to-Many between Users and ProjectAssignments
+            // 1-to-Many between User and ProjectAssignments
             modelBuilder
-                .Entity<Users>()
-                .HasMany(u => u.ProjectAssignments)
+                .Entity<User>()
+                .HasMany(u => u.ProjectAssignment)
                 .WithOne(pa => pa.User)
                 .HasForeignKey(pa => pa.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // 1-to-Many between TalentProfiles and TalentSkills
+            // 1-to-Many between TalentProfile and TalentSkills
             modelBuilder
-                .Entity<TalentProfiles>()
-                .HasMany(tp => tp.TalentSkills)
+                .Entity<TalentProfile>()
+                .HasMany(tp => tp.TalentSkill)
                 .WithOne(ts => ts.TalentProfile)
                 .HasForeignKey(ts => ts.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // 1-to-Many between Skills and TalentSkills
             modelBuilder
-                .Entity<Skills>()
-                .HasMany(s => s.TalentSkills)
+                .Entity<Skill>()
+                .HasMany(s => s.TalentSkill)
                 .WithOne(ts => ts.Skill)
                 .HasForeignKey(ts => ts.SkillId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // 1-to-Many between Projects and ProjectAssignments
             modelBuilder
-                .Entity<Projects>()
-                .HasMany(p => p.ProjectAssignments)
+                .Entity<Project>()
+                .HasMany(p => p.ProjectAssignment)
                 .WithOne(pa => pa.Project)
                 .HasForeignKey(pa => pa.ProjectId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -78,24 +78,24 @@ namespace SkillSyncAPI.Data
         private void SeedData(ModelBuilder modelBuilder)
         {
             // Seed data using static seeder methods
-            modelBuilder.Entity<Roles>().HasData(SkillSyncDataSeeder.GetDefaultRoles());
+            modelBuilder.Entity<Role>().HasData(SkillSyncDataSeeder.GetDefaultRoles());
 
-            modelBuilder.Entity<Skills>().HasData(SkillSyncDataSeeder.GetDefaultSkills());
+            modelBuilder.Entity<Skill>().HasData(SkillSyncDataSeeder.GetDefaultSkills());
 
-            modelBuilder.Entity<Users>().HasData(SkillSyncDataSeeder.GetDefaultUsers());
+            modelBuilder.Entity<User>().HasData(SkillSyncDataSeeder.GetDefaultUser());
 
             modelBuilder
-                .Entity<TalentProfiles>()
+                .Entity<TalentProfile>()
                 .HasData(SkillSyncDataSeeder.GetDefaultTalentProfiles());
 
             modelBuilder
-                .Entity<TalentSkills>()
+                .Entity<TalentSkill>()
                 .HasData(SkillSyncDataSeeder.GetDefaultTalentSkills());
 
-            modelBuilder.Entity<Projects>().HasData(SkillSyncDataSeeder.GetDefaultProjects());
+            modelBuilder.Entity<Project>().HasData(SkillSyncDataSeeder.GetDefaultProjects());
 
             modelBuilder
-                .Entity<ProjectAssignments>()
+                .Entity<ProjectAssignment>()
                 .HasData(SkillSyncDataSeeder.GetDefaultProjectAssignments());
         }
     }

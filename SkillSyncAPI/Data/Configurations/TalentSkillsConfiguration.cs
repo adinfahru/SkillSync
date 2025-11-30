@@ -4,9 +4,9 @@ using SkillSyncAPI.Models;
 
 namespace SkillSyncAPI.Data.Configurations
 {
-    public class TalentSkillsConfiguration : IEntityTypeConfiguration<TalentSkills>
+    public class TalentSkillsConfiguration : IEntityTypeConfiguration<TalentSkill>
     {
-        public void Configure(EntityTypeBuilder<TalentSkills> builder)
+        public void Configure(EntityTypeBuilder<TalentSkill> builder)
         {
             builder.ToTable("talent_skills");
 

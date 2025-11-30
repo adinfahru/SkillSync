@@ -4,9 +4,9 @@ using SkillSyncAPI.Models;
 
 namespace SkillSyncAPI.Data.Configurations
 {
-    public class UsersConfiguration : IEntityTypeConfiguration<Users>
+    public class UsersConfiguration : IEntityTypeConfiguration<User>
     {
-        public void Configure(EntityTypeBuilder<Users> builder)
+        public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.ToTable("users");
 
@@ -32,11 +32,11 @@ namespace SkillSyncAPI.Data.Configurations
                 .IsRequired()
                 .HasMaxLength(255);
 
-            builder.Property(u => u.Otp).HasColumnName("Otp");
+            builder.Property(u => u.Otp).HasColumnName("otp");
 
-            builder.Property(u => u.Expired).HasColumnName("Expired");
+            builder.Property(u => u.Expired).HasColumnName("expired");
 
-            builder.Property(u => u.IsUsed).HasColumnName("IsUsed");
+            builder.Property(u => u.IsUsed).HasColumnName("is_used");
 
             builder
                 .Property(u => u.CreatedAt)
