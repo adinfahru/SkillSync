@@ -10,9 +10,8 @@ namespace SkillSyncAPI.Data.Configurations
         {
             builder.ToTable("project_assignments");
 
-            builder.HasKey(pa => pa.Id);
-
-            builder.Property(pa => pa.Id).HasColumnName("id");
+            // Composite Primary Key
+            builder.HasKey(pa => new { pa.ProjectId, pa.UserId });
 
             builder.Property(pa => pa.ProjectId).HasColumnName("project_id");
 
@@ -23,14 +22,6 @@ namespace SkillSyncAPI.Data.Configurations
                 .HasColumnName("role_on_project")
                 .IsRequired()
                 .HasMaxLength(100);
-
-            builder
-                .Property(pa => pa.Status)
-                .HasColumnName("status")
-                .IsRequired()
-                .HasConversion<string>()
-                .HasMaxLength(50)
-                .HasDefaultValue(ProjectAssignmentStatus.Active);
 
             builder
                 .Property(pa => pa.AssignedAt)

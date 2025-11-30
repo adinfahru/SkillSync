@@ -425,51 +425,41 @@ public static class SkillSyncDataSeeder
             // E-Commerce Platform assignments
             new ProjectAssignment
             {
-                Id = new Guid("50000000-0000-0000-0000-000000000001"),
                 ProjectId = ECommerceProjectId,
                 UserId = JohnDoeUserId,
                 RoleOnProject = "Senior Backend Developer",
-                Status = ProjectAssignmentStatus.Active,
                 AssignedAt = now.AddDays(-15),
             },
             new ProjectAssignment
             {
-                Id = new Guid("50000000-0000-0000-0000-000000000002"),
                 ProjectId = ECommerceProjectId,
                 UserId = JaneSmithUserId,
                 RoleOnProject = "Full Stack Developer",
-                Status = ProjectAssignmentStatus.Active,
                 AssignedAt = now.AddDays(-12),
             },
             // Customer Management System assignments
             new ProjectAssignment
             {
-                Id = new Guid("50000000-0000-0000-0000-000000000003"),
                 ProjectId = CrmProjectId,
                 UserId = JaneSmithUserId,
                 RoleOnProject = "Frontend Developer",
-                Status = ProjectAssignmentStatus.Inactive,
                 AssignedAt = now.AddDays(-45),
                 CompletedAt = now.AddDays(-20),
             },
             // Mobile Banking App assignments (completed)
             new ProjectAssignment
             {
-                Id = new Guid("50000000-0000-0000-0000-000000000004"),
                 ProjectId = MobileBankingProjectId,
                 UserId = JohnDoeUserId,
                 RoleOnProject = "Tech Lead",
-                Status = ProjectAssignmentStatus.Completed,
                 AssignedAt = now.AddDays(-60),
                 CompletedAt = now.AddDays(-5),
             },
             new ProjectAssignment
             {
-                Id = new Guid("50000000-0000-0000-0000-000000000005"),
                 ProjectId = MobileBankingProjectId,
                 UserId = MikeWilsonUserId,
                 RoleOnProject = "DevOps Engineer",
-                Status = ProjectAssignmentStatus.Completed,
                 AssignedAt = now.AddDays(-50),
                 CompletedAt = now.AddDays(-5),
             },
