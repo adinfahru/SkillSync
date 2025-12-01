@@ -1,5 +1,6 @@
-using SkillSyncAPI.DTOs;
+using SkillSyncAPI.DTOs.Projects;
 using SkillSyncAPI.Models;
+using SkillSyncAPI.Repositories;
 using SkillSyncAPI.Repositories.Interfaces;
 using SkillSyncAPI.Services.Interfaces;
 
@@ -8,10 +9,12 @@ namespace SkillSyncAPI.Services;
 public class ProjectService : IProjectService
 {
     private readonly IProjectRepository _projectRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public ProjectService(IProjectRepository projectRepository)
+    public ProjectService(IProjectRepository projectRepository, IUnitOfWork unitOfWork)
     {
         _projectRepository = projectRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<List<ProjectResponseDto>> GetAllProjectsAsync(string? search = null)
@@ -28,23 +31,29 @@ public class ProjectService : IProjectService
 
     public async Task<ProjectResponseDto> CreateProjectAsync(CreateProjectDto dto)
     {
-        if (!Enum.TryParse<ProjectStatus>(dto.Status, true, out var status))
-            throw new InvalidOperationException(
-                "Invalid project status. Valid values: Active, Inactive, Completed, OnHold, Cancelled"
-            );
-
         var project = new Project
         {
             Id = Guid.NewGuid(),
             Name = dto.Name,
             Description = dto.Description,
-            Status = status,
+            Status = ParseStatus(dto.Status),
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
         };
 
         await _projectRepository.CreateAsync(project, CancellationToken.None);
         return MapToResponseDto(project);
+    }
+
+    // Helper method untuk clarity
+    private ProjectStatus ParseStatus(string status)
+    {
+        if (Enum.TryParse<ProjectStatus>(status, true, out var result))
+            return result;
+
+        throw new ArgumentException(
+            "Invalid status. Use: Active, Inactive, Completed, OnHold, Cancelled"
+        );
     }
 
     public async Task<ProjectResponseDto?> UpdateProjectAsync(Guid id, UpdateProjectDto dto)

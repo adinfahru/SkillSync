@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using SkillSyncAPI.DTOs;
+using SkillSyncAPI.DTOs.Projects;
 using SkillSyncAPI.Services.Interfaces;
 using SkillSyncAPI.Utilities;
 
@@ -37,12 +37,23 @@ public class ProjectsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateProject([FromBody] CreateProjectDto dto)
     {
-        var project = await _projectService.CreateProjectAsync(dto);
-        return CreatedAtAction(
-            nameof(GetProjectById),
-            new { id = project.Id },
-            new ApiResponse<ProjectResponseDto>(StatusCodes.Status201Created, "Created", project)
-        );
+        try
+        {
+            var project = await _projectService.CreateProjectAsync(dto);
+            return CreatedAtAction(
+                nameof(GetProjectById),
+                new { id = project.Id },
+                new ApiResponse<ProjectResponseDto>(
+                    StatusCodes.Status201Created,
+                    "Project created successfully",
+                    project
+                )
+            );
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new ApiResponse<object>(StatusCodes.Status400BadRequest, ex.Message));
+        }
     }
 
     [HttpPut("{id}")]

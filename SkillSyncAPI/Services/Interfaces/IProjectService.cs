@@ -1,4 +1,4 @@
-using SkillSyncAPI.DTOs;
+using SkillSyncAPI.DTOs.Projects;
 
 namespace SkillSyncAPI.Services.Interfaces;
 

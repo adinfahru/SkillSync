@@ -12,11 +12,13 @@ public class ProjectRepository : Repository<Project>, IProjectRepository
 
     public async Task<IEnumerable<Project>> GetAllAsync(CancellationToken ct, string? search = null)
     {
-        var query = _context.Project.AsQueryable();
+        // Jika tidak ada search, return semua projects
+        if (string.IsNullOrEmpty(search))
+            return await _context.Project.ToListAsync(ct);
 
-        if (!string.IsNullOrEmpty(search))
-            query = query.Where(p => p.Name.Contains(search) || p.Description.Contains(search));
-
-        return await query.ToListAsync(ct);
+        // Jika ada search, filter berdasarkan nama dan deskripsi
+        return await _context
+            .Project.Where(p => p.Name.Contains(search) || p.Description.Contains(search))
+            .ToListAsync(ct);
     }
 }
