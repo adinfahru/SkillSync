@@ -5,6 +5,7 @@ using SkillSyncAPI.Repositories.Data;
 using SkillSyncAPI.Repositories.Interfaces;
 using SkillSyncAPI.Services;
 using SkillSyncAPI.Services.Interfaces;
+using SkillSyncAPI.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,9 @@ builder.Services.AddScoped<IProjectAssignmentService, ProjectAssignmentService>(
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+// Add global exception handler
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
