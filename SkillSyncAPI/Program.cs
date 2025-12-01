@@ -21,6 +21,7 @@ builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 builder.Services.AddScoped<ITalentSkillRepository, TalentSkillRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IProjectAssignmentRepository, ProjectAssignmentRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Add services
 builder.Services.AddScoped<IUserService, UserService>();
