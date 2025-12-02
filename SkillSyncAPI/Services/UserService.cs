@@ -2,12 +2,14 @@ using SkillSyncAPI.Data;
 using SkillSyncAPI.DTOs;
 using SkillSyncAPI.Models;
 using SkillSyncAPI.Repositories.Interfaces;
+using SkillSyncAPI.Utilities;
 
 namespace SkillSyncAPI.Services;
 
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IHashHandler _hashHandler;
     private static readonly List<Guid> ValidRoleIds = new()
     {
         SkillSyncDataSeeder.AdminRoleId,
@@ -16,9 +18,10 @@ public class UserService : IUserService
         SkillSyncDataSeeder.TalentRoleId,
     };
 
-    public UserService(IUserRepository userRepository)
+    public UserService(IUserRepository userRepository, IHashHandler hashHandler)
     {
         _userRepository = userRepository;
+        _hashHandler = hashHandler;
     }
 
     public async Task<List<UserResponseDto>> GetAllUsersAsync(string? search = null)
@@ -59,7 +62,7 @@ public class UserService : IUserService
             Id = Guid.NewGuid(),
             UserName = dto.UserName,
             Email = dto.Email,
-            Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+            Password = _hashHandler.HashPassword(dto.Password),
             RoleId = dto.RoleId,
             IsActive = true,
             CreatedAt = DateTime.UtcNow,
