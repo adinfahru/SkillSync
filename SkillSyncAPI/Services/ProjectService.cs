@@ -3,6 +3,7 @@ using SkillSyncAPI.Models;
 using SkillSyncAPI.Repositories;
 using SkillSyncAPI.Repositories.Interfaces;
 using SkillSyncAPI.Services.Interfaces;
+using SkillSyncAPI.Utilities;
 
 namespace SkillSyncAPI.Services;
 
@@ -10,11 +11,17 @@ public class ProjectService : IProjectService
 {
     private readonly IProjectRepository _projectRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IEmailHandler _emailHandler;
 
-    public ProjectService(IProjectRepository projectRepository, IUnitOfWork unitOfWork)
+    public ProjectService(
+        IProjectRepository projectRepository,
+        IUnitOfWork unitOfWork,
+        IEmailHandler emailHandler
+    )
     {
         _projectRepository = projectRepository;
         _unitOfWork = unitOfWork;
+        _emailHandler = emailHandler;
     }
 
     public async Task<List<ProjectResponseDto>> GetAllProjectsAsync(string? search = null)
@@ -42,7 +49,40 @@ public class ProjectService : IProjectService
         };
 
         await _projectRepository.CreateAsync(project, CancellationToken.None);
+
+        // Send email notification (fire and forget)
+        _ = SendProjectCreationEmailAsync(project);
+
         return MapToResponseDto(project);
+    }
+
+    private async Task SendProjectCreationEmailAsync(Project project)
+    {
+        try
+        {
+            var emailBody =
+                $@"
+                <h2>New Project Created</h2>
+                <p><strong>Project Name:</strong> {project.Name}</p>
+                <p><strong>Description:</strong> {project.Description}</p>
+                <p><strong>Status:</strong> {project.Status}</p>
+                <p><strong>Created At:</strong> {project.CreatedAt:yyyy-MM-dd HH:mm:ss}</p>
+                <hr>
+                <p>Project ID: {project.Id}</p>
+            ";
+
+            var emailDto = new EmailDto(
+                To: "admin@skillsync.local",
+                Subject: $"New Project Created: {project.Name}",
+                Body: emailBody
+            );
+
+            await _emailHandler.SendEmailAsync(emailDto);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to send project creation email: {ex.Message}");
+        }
     }
 
     // Helper method untuk clarity
