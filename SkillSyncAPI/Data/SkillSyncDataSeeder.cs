@@ -168,6 +168,8 @@ public static class SkillSyncDataSeeder
     public static List<User> GetDefaultUser()
     {
         var now = new DateTime(2025, 11, 28, 0, 0, 0, DateTimeKind.Utc);
+        // Password: 12345678 (hashed with BCrypt cost factor 11)
+        var hashedPassword = "$2a$11$FVpzZRbJEI5eZgpIq59.FOfLEYYsM3dYyTz93FfGKBr6OQFQvDlhS";
 
         return new List<User>
         {
@@ -178,7 +180,7 @@ public static class SkillSyncDataSeeder
                 RoleId = AdminRoleId,
                 UserName = "admin",
                 Email = "admin@skillsync.com",
-                Password = "$2a$11$N2oKjyGJN5e5FbZ3vHkdLO1KJxCvYuZx3pRqF8tVwYsOZx9HkQ.mG", // Admin123!
+                Password = hashedPassword,
                 CreatedAt = now,
                 UpdatedAt = now,
                 IsActive = true,
@@ -190,7 +192,7 @@ public static class SkillSyncDataSeeder
                 RoleId = HRRoleId,
                 UserName = "hr.manager",
                 Email = "hr@skillsync.com",
-                Password = "$2a$11$M1nJiyFIN4d4EaY2uGjcKN0JIwBuXtYw2oQpE7sUvXrNYx8GjP.lF", // HR123!
+                Password = hashedPassword,
                 CreatedAt = now,
                 UpdatedAt = now,
                 IsActive = true,
@@ -202,7 +204,7 @@ public static class SkillSyncDataSeeder
                 RoleId = ProjectManagerRoleId,
                 UserName = "pm.john",
                 Email = "john.pm@skillsync.com",
-                Password = "$2a$11$L0mHhxEHM3c3DaX1tFibJM9IHvAtWsXv1nPoD6rTuWqMXw7FiO.kE", // PM123!
+                Password = hashedPassword,
                 CreatedAt = now,
                 UpdatedAt = now,
                 IsActive = true,
@@ -214,7 +216,7 @@ public static class SkillSyncDataSeeder
                 RoleId = TalentRoleId,
                 UserName = "john.doe",
                 Email = "john.doe@skillsync.com",
-                Password = "$2a$11$K9lGgwDGL2b2CaW0sFhaIM8HGuAsVrWu0mOnC5qSsVpLWv6EhN.jD", // John123!
+                Password = hashedPassword,
                 CreatedAt = now,
                 UpdatedAt = now,
                 IsActive = true,
@@ -225,7 +227,7 @@ public static class SkillSyncDataSeeder
                 RoleId = TalentRoleId,
                 UserName = "jane.smith",
                 Email = "jane.smith@skillsync.com",
-                Password = "$2a$11$J8kFfvCFK1a1BaV9rEgaHL7GFtArUqVt9lNmB4pRrUoKVu5DgM.iC", // Jane123!
+                Password = hashedPassword,
                 CreatedAt = now,
                 UpdatedAt = now,
                 IsActive = true,
@@ -236,7 +238,7 @@ public static class SkillSyncDataSeeder
                 RoleId = TalentRoleId,
                 UserName = "mike.wilson",
                 Email = "mike.wilson@skillsync.com",
-                Password = "$2a$11$I7jEeuBEJ0Z0AaU8qDfaGK6FEsAqTpUs8kMlA3oQqTnJTt4CfL.hB", // Mike123!
+                Password = hashedPassword,
                 CreatedAt = now,
                 UpdatedAt = now,
                 IsActive = true,

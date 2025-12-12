@@ -54,11 +54,6 @@ Dokumentasi lengkap semua API endpoints dalam SkillSync API.
 - `POST /api/talents/search` - Search talents by criteria
 - `GET /api/talents/match/{projectId}` - Auto-match talents for project
 
-### **🙋 Talent Self-Service (Talent Only)**
-- `GET /api/me/profile` - Get own profile
-- `PUT /api/me/profile` - Update own profile
-- `GET /api/me/skills` - Get own skills
-- `GET /api/me/assignments` - Get own assignments (active & history)
 
 ---
 

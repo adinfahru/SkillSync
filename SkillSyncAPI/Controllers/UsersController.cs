@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SkillSyncAPI.DTOs;
 using SkillSyncAPI.Services;
@@ -6,6 +7,7 @@ using SkillSyncAPI.Utilities;
 namespace SkillSyncAPI.Controllers;
 
 [ApiController]
+[Authorize(Roles = "Admin")]
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
@@ -17,6 +19,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAllUsers([FromQuery] string? search = null)
     {
         var users = await _userService.GetAllUsersAsync(search);

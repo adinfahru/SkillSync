@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using SkillSyncAPI.DTOs.Users;
 
-namespace SkillSyncAPI.Services.Interfaces
+namespace SkillSyncAPI.Services.Interfaces;
+
+public interface IAuthService
 {
-    public class IAuthService { }
+    Task<LoginResponseDto?> LoginAsync(LoginRequestDto dto);
 }

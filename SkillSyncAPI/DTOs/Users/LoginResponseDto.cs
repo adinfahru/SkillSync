@@ -1,0 +1,11 @@
+namespace SkillSyncAPI.DTOs.Users;
+
+public class LoginResponseDto
+{
+    public Guid UserId { get; set; }
+    public string UserName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string RoleName { get; set; } = string.Empty;
+    public string Token { get; set; } = string.Empty;
+    public int ExpiresIn { get; set; } // dalam detik
+}

@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 namespace SkillSyncAPI.Models;
 
 public class User
